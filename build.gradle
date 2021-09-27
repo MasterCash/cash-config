@@ -3,6 +3,14 @@ plugins {
 	id 'maven-publish'
 }
 
+sourceSets {
+	test {
+		java {
+			srcDirs = ["src/test/java"]
+		}
+	}
+}
+
 sourceCompatibility = JavaVersion.VERSION_16
 targetCompatibility = JavaVersion.VERSION_16
 
@@ -29,6 +37,7 @@ dependencies {
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
+	testImplementation "junit:junit:4.13.1"
 }
 
 processResources {

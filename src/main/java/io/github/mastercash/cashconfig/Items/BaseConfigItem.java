@@ -1,0 +1,106 @@
+package io.github.mastercash.cashconfig.Items;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import org.jetbrains.annotations.Nullable;
+
+public abstract class BaseConfigItem<T> {
+  protected final String key;
+  @Nullable
+  protected T value;
+  protected final Type type;
+  
+  public abstract void toJson(JsonObject parent); 
+  public abstract void toJson(JsonArray parent);
+  public abstract void fromJson(JsonElement element);
+
+  public Type getType() {
+    return type;
+  }
+  public String getKey() {
+    return key;
+  }
+  @Nullable
+  public T getValue() {
+    return value;
+  }
+
+  protected static <T> boolean validType(JsonElement element, Class<T> clazz) {
+    if(element.isJsonObject()) {
+      return clazz.equals(ConfigGroup.class);
+    }
+    if(element.isJsonArray()) {
+      return clazz.equals(ConfigList.class);
+    }
+    if(element.isJsonPrimitive()) {
+      var prim = element.getAsJsonPrimitive();
+      if(prim.isNumber()) {
+        return clazz.equals(ConfigNumber.class);
+      }
+      if(prim.isString()) {
+        return clazz.equals(ConfigString.class);
+      }
+      if(prim.isBoolean()) {
+        return clazz.equals(ConfigBoolean.class);
+      }
+    }
+    return false;
+  }
+
+  protected static boolean validType(JsonElement element, Type type) {
+    if(element.isJsonObject()) return type.equals(Type.GROUP);
+    if(element.isJsonArray()) return type.equals(Type.ARRAY);
+    if(element.isJsonPrimitive()) {
+      var prim = element.getAsJsonPrimitive();
+      if(prim.isString()) return type.equals(Type.STRING);
+      if(prim.isBoolean()) return type.equals(Type.BOOLEAN);
+      if(prim.isNumber()) return type.equals(Type.NUMBER);
+    }
+    return false;
+  }
+
+  protected BaseConfigItem(String key, Type type) {
+    this.key = key;
+    this.type = type;
+  }
+
+  public static Type getType(JsonElement value) {
+    if(value.isJsonArray()) return Type.ARRAY;
+    if(value.isJsonObject()) return Type.GROUP;
+    if(value.isJsonPrimitive()) {
+      var prim = value.getAsJsonPrimitive();
+      if(prim.isString()) return Type.STRING;
+      if(prim.isBoolean()) return Type.BOOLEAN;
+      if(prim.isNumber()) return Type.NUMBER;
+    }
+    return null;
+  }
+  public static BaseConfigItem<?> getInstance(Type type) {
+    return getInstance(type, "");
+  }
+  public static BaseConfigItem<?> getInstance(Type type, String key) {
+    switch(type){
+      case ARRAY:
+        return new ConfigList(key, null, null);
+      case BOOLEAN:
+        return new ConfigBoolean(key, null);
+      case GROUP:
+        return new ConfigGroup(key, null);
+      case NUMBER:
+        return new ConfigNumber(key, null);
+      case STRING:
+        return new ConfigString(key, null);
+    }
+    return null;
+  }
+
+  public enum Type {
+    GROUP,
+    BOOLEAN,
+    STRING,
+    NUMBER,
+    ARRAY
+  }
+}
