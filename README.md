@@ -88,6 +88,8 @@ This type is used for storing/loading objects in a configuration. This type stor
 
 Nesting of Arrays and Objects is supported.
 
+Note: `getValue()` returns an Immutable version of the list of items within. to add an item use `AddItem()`
+
 Usage:
 ```java
 // if being added to a group
@@ -117,6 +119,8 @@ Type enum: `Type.ARRAY`
 This type is used for storing/loading arrays in a configuration. This type stores any subclass of `BaseConfigItem`. Items given to this object don't have a `key` and this value is not used for this type. Although, this type doesn't support multi-type variable storage. 
 
 This type has a field `subType` of `Type`. This represents the type inside the array. If this type is not given at creation, it is deduced from the first item added to the list.
+
+Note: `getValue()` returns an Immutable version of the list of items within. to add an item use `AddItem()`
 
 Usage:
 ```java
