@@ -40,9 +40,11 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
     this.value.add(item);
     return true;
   }
+
   public BaseConfigItem<?> GetItem(String key) {
     return _items.get(key);
   }
+
   public boolean HasItem(String key) {
     return _items.containsKey(key);
   }

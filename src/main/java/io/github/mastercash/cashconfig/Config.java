@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,9 +31,12 @@ public final class Config {
   
   public Config(List<BaseConfigItem<?>> items, File file) {
     this.items = new HashMap<>();
-    for(var item : items) {
-      this.items.put(item.getKey(), item);
+    if(items != null) {
+      for(var item : items) {
+        this.items.put(item.getKey(), item);
+      }
     }
+    if(file == null) throw new InvalidParameterException("file is null");
     this.file = file;
   }
 
@@ -52,6 +56,16 @@ public final class Config {
       e.printStackTrace();
     }
   }
+
+  public boolean hasFile() {
+    try (FileInputStream stream = new FileInputStream(file)) {
+      return true;
+    }
+    catch(Exception e) {
+      return false;
+    }
+  }
+
   public void readFile() {
     try (FileInputStream stream = new FileInputStream(file)) {
       byte[] bytes = new byte[stream.available()];
@@ -74,13 +88,13 @@ public final class Config {
         }
       }
     } catch (FileNotFoundException e) {
-
+      saveFile();
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  public BaseConfigItem<?> getItem(String path, Type type) {
+  public BaseConfigItem<?> getItem(String path, Type type) throws IllegalArgumentException {
     var splitPath = path.split("\\.");
     var selectedItem = items.get(splitPath[0]);
     var paths = new LinkedList<>(Arrays.asList(splitPath));

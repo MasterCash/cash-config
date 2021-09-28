@@ -41,6 +41,10 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
     return value.size();
   }
 
+  public Type getSubType() {
+    return subType;
+  }
+
   public void AddItem(BaseConfigItem<?> item) {
     if(subType == null) {
       subType = item.getType();
