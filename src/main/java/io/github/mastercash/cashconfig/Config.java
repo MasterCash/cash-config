@@ -47,11 +47,19 @@ import io.github.mastercash.cashconfig.Items.BaseConfigItem;
 import io.github.mastercash.cashconfig.Items.ConfigGroup;
 import io.github.mastercash.cashconfig.Items.BaseConfigItem.Type;
 
+/**
+ * Configuration Object. Use this to load and save configuration data from a file.
+ */
 public final class Config {
   private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
   private final Map<String, BaseConfigItem<?>> items;
   private final File file;
-  
+
+  /**
+   * Create new Configuration Instance
+   * @param items List of items to default in if no values
+   * @param file  file to read/save to.
+   */ 
   public Config(List<BaseConfigItem<?>> items, File file) {
     this.items = new HashMap<>();
     if(items != null) {
@@ -63,10 +71,19 @@ public final class Config {
     this.file = file;
   }
 
+  /**
+   * Get list of Configuration items in this configuration.
+   * If {@link #readFile()} hasn't been called, this will contain the defaults given.
+   * @see #getItem(String, Type) for retrieving an individual item
+   * @return list of {@link BaseConfigItem}'s containing configuration data.
+   */
   public List<BaseConfigItem<?>> getItems() {
     return new ArrayList<>(items.values());
   }
 
+  /**
+   * Saves current configuration to a file
+   */
   public void saveFile() {
     JsonObject object = new JsonObject();
     for(var item : items.values()) {
@@ -80,6 +97,10 @@ public final class Config {
     }
   }
 
+  /**
+   * Checks to see if the file exists
+   * @return true if file exists, false otherwise
+   */
   public boolean hasFile() {
     try (FileInputStream stream = new FileInputStream(file)) {
       return true;
@@ -89,6 +110,9 @@ public final class Config {
     }
   }
 
+  /**
+   * Reads configuration from file. Values can be retrieved via {@link #getItem(String, Type)} or {@link #getItems()}
+   */
   public void readFile() {
     try (FileInputStream stream = new FileInputStream(file)) {
       byte[] bytes = new byte[stream.available()];
@@ -117,6 +141,13 @@ public final class Config {
     }
   }
 
+  /**
+   * Retrieves an Item from the configuration structure.
+   * @param path Path to value in the form of 'obj1.obj2.obj3'
+   * @param type Type of the value expected to find at the end of the path.
+   * @return The Configuration item found at the end of the path. If item is not found, null is returned.
+   * @throws IllegalArgumentException thrown if {@link BaseConfigItem.Type} doesn't match object's type
+   */
   public BaseConfigItem<?> getItem(String path, Type type) throws IllegalArgumentException {
     var splitPath = path.split("\\.");
     var selectedItem = items.get(splitPath[0]);

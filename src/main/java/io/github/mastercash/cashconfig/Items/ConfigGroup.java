@@ -34,12 +34,28 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+/**
+ * Configuration item for a json object for {@link BaseConfigItem}
+ */
 public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
-  protected Map<String, BaseConfigItem<?>> _items;
+  private Map<String, BaseConfigItem<?>> _items;
 
+  /**
+   * Creates an empty Group item with no key.
+   * Should not be used if adding this item to {@link ConfigGroup}
+   */
   public ConfigGroup() {
     this("", null);
   }
+
+  /**
+   * Creates a Group item with given key and items.
+   * null is a valid parameter for items
+   * If items is null at creation, an empty list will be used instead.
+   * @param key The key to be used if put in a group.
+   * @param items List of items to add to this group by default.
+   * @throws InvalidParameterException Two items in items have the same key.
+   */
   public ConfigGroup(String key, List<BaseConfigItem<?>> items) {
     super(key, Type.GROUP);
     _items = new HashMap<>();
@@ -53,10 +69,19 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
     }
   }
 
+  /**
+   * The amount of items in this Group item.
+   * @return count of {@link #getValue()}
+   */
   public int size() {
     return value.size();
   }
 
+  /**
+   * Adds an item to this Group item.
+   * @param item item to add.
+   * @return true if added false if key for that item already exists.
+   */
   public boolean AddItem(BaseConfigItem<?> item) {
     if(_items.containsKey(item.getKey())) return false;
     _items.put(item.getKey(), item);
@@ -64,10 +89,20 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
     return true;
   }
 
+  /**
+   * Gets an item with the given key
+   * @param key key to look for.
+   * @return the item if found, otherwise null
+   */
   public BaseConfigItem<?> GetItem(String key) {
     return _items.get(key);
   }
 
+  /**
+   * Checks to see if an item of a given key exists
+   * @param key key to check
+   * @return true if item exits, false otherwise.
+   */
   public boolean HasItem(String key) {
     return _items.containsKey(key);
   }
@@ -138,6 +173,9 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
     }
   }
 
+  /**
+   * the return value is an unmodifiable view of the list {@link Collections#unmodifiableList(List)}
+   */
   @Override
   public List<BaseConfigItem<?>> getValue() {
     return Collections.unmodifiableList(value);
