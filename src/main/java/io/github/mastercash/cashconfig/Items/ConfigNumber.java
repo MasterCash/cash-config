@@ -23,13 +23,14 @@
  */
 package io.github.mastercash.cashconfig.Items;
 
+import java.util.Objects;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import org.jetbrains.annotations.ApiStatus.Internal;
-import io.github.mastercash.cashconfig.Config;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Configuration item for Numerical values for {@link BaseConfigItem}
@@ -38,9 +39,8 @@ public final class ConfigNumber extends BaseConfigItem<Number> {
 
   /**
    * Creates an empty Number item with no key
-   * @deprecated Should not be used outside of {@link Config} or {@link BaseConfigItem} classes/subclasses. Use {@link #ConfigNumber(String, Number)} instead.
+   * if adding to a {@link ConfigGroup}, use {@link #ConfigNumber(String, Number)} instead.
    */
-  @Internal
   public ConfigNumber() {
     this("", 0);
   }
@@ -50,23 +50,26 @@ public final class ConfigNumber extends BaseConfigItem<Number> {
    * @param key The key to be used if put in a group.
    * @param value The default value contained in this item.
    */
-  public ConfigNumber(String key, Number value) {
-    super(key, Type.NUMBER);
+  public ConfigNumber(@NotNull String key, Number value) {
+    super(Objects.requireNonNull(key), Type.NUMBER);
     this.value = value != null ? value : 0;
   }
 
   @Override
-  public void toJson(JsonObject parent) {
+  public void toJson(@NotNull JsonObject parent) {
+    Objects.requireNonNull(parent);
     parent.add(key, new JsonPrimitive(value));
   }
 
   @Override
-  public void toJson(JsonArray parent) {
+  public void toJson(@NotNull JsonArray parent) {
+    Objects.requireNonNull(parent);
     parent.add(new JsonPrimitive(value));
   }
 
   @Override
-  public void fromJson(JsonElement element) {
+  public void fromJson(@NotNull JsonElement element) {
+    Objects.requireNonNull(element);
     value = element.getAsNumber();
   }
   

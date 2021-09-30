@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,6 +42,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.apache.logging.log4j.Level;
+import org.jetbrains.annotations.NotNull;
 
 import io.github.mastercash.cashconfig.Items.BaseConfigItem;
 import io.github.mastercash.cashconfig.Items.ConfigGroup;
@@ -60,14 +61,14 @@ public final class Config {
    * @param items List of items to default in if no values
    * @param file  file to read/save to.
    */ 
-  public Config(List<BaseConfigItem<?>> items, File file) {
+  public Config(List<BaseConfigItem<?>> items,@NotNull File file) {
+    Objects.requireNonNull(file);
     this.items = new HashMap<>();
     if(items != null) {
       for(var item : items) {
         this.items.put(item.getKey(), item);
       }
     }
-    if(file == null) throw new InvalidParameterException("file is null");
     this.file = file;
   }
 
@@ -148,7 +149,9 @@ public final class Config {
    * @return The Configuration item found at the end of the path. If item is not found, null is returned.
    * @throws IllegalArgumentException thrown if {@link BaseConfigItem.Type} doesn't match object's type
    */
-  public BaseConfigItem<?> getItem(String path, Type type) throws IllegalArgumentException {
+  public BaseConfigItem<?> getItem(@NotNull String path, @NotNull Type type) throws IllegalArgumentException {
+    Objects.requireNonNull(path);
+    Objects.requireNonNull(type);
     var splitPath = path.split("\\.");
     var selectedItem = items.get(splitPath[0]);
     var paths = new LinkedList<>(Arrays.asList(splitPath));
