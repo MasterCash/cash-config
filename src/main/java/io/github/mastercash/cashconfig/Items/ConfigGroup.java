@@ -62,9 +62,8 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
   public ConfigGroup(@NotNull String key, List<BaseConfigItem<?>> items) {
     super(Objects.requireNonNull(key), Type.GROUP);
     _items = new HashMap<>();
-    value = items != null ? items : new ArrayList<>();
-
-    for(var item : value) {
+    if(items == null) items = new ArrayList<>();
+    for(var item : items) {
       if(_items.containsKey(item.getKey())) {
         throw new InvalidParameterException("Duplicate key: " + item.getKey());
       }
@@ -77,7 +76,7 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @return count of {@link #getValue()}
    */
   public int size() {
-    return value.size();
+    return _items.size();
   }
 
   /**
@@ -89,7 +88,6 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
     Objects.requireNonNull(item);
     if(_items.containsKey(item.getKey())) return false;
     _items.put(item.getKey(), item);
-    this.value.add(item);
     return true;
   }
 
@@ -108,6 +106,11 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
     return _items.remove(key);
   }
 
+  public BaseConfigItem<?> SetItem(@NotNull BaseConfigItem<?> item) {
+    Objects.requireNonNull(item);
+    return _items.put(item.getKey(), item);
+  }
+
   /**
    * Checks to see if an item of a given key exists
    * @param key key to check
@@ -122,7 +125,7 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
   public void toJson(@NotNull JsonObject parent) {
     Objects.requireNonNull(parent);
     var element = new JsonObject();
-    for(var item : value) {
+    for(var item : _items.values()) {
       item.toJson(element);
     }
     parent.add(key, element);
@@ -132,7 +135,7 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
   public void toJson(@NotNull JsonArray parent) {
     Objects.requireNonNull(parent);
     var element = new JsonObject();
-    for(var item : value) {
+    for(var item : _items.values()) {
       item.toJson(element);
     }
     parent.add(element);
@@ -149,13 +152,11 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
           var item = new ConfigList(entry.getKey(), null, null);
           item.fromJson(entry.getValue());
           _items.put(entry.getKey(), item);
-          value.add(item);
         }
         else if(entry.getValue().isJsonObject()) {
           var item = new ConfigGroup(entry.getKey(), null);
           item.fromJson(entry.getValue());
           _items.put(entry.getKey(), item);
-          value.add(item);
         }
         else if(entry.getValue().isJsonPrimitive()) {
           var prim = entry.getValue().getAsJsonPrimitive();
@@ -163,19 +164,16 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
             var item = new ConfigString(entry.getKey(), null);
             item.fromJson(prim);
             _items.put(entry.getKey(), item);
-            value.add(item);
           }
           else if(prim.isNumber()) {
             var item = new ConfigNumber(entry.getKey(), null);
             item.fromJson(prim);
             _items.put(entry.getKey(), item);
-            value.add(item);
           }
           else if(prim.isBoolean()) {
             var item = new ConfigBoolean(entry.getKey(), null);
             item.fromJson(prim);
             _items.put(entry.getKey(), item);
-            value.add(item);
           }
         }
       } else {
@@ -192,7 +190,7 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
    */
   @Override
   public List<BaseConfigItem<?>> getValue() {
-    return Collections.unmodifiableList(value);
+    return Collections.unmodifiableList(new ArrayList<>(_items.values()));
   }
 
 }
