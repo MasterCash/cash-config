@@ -25,6 +25,7 @@ package io.github.mastercash.cashconfig.Items;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -35,12 +36,32 @@ import org.apache.logging.log4j.Level;
 
 import io.github.mastercash.cashconfig.Constants;
 
+/**
+ * Configuration item for a json array for {@link BaseConfigItem}
+ */
 public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
 
   private Type subType;
+
+  /**
+   * Creates an empty Array item with no key.
+   * Should not be used if adding this item to {@link ConfigGroup}
+   * The first item added (via {@link #AddItem(BaseConfigItem)}) will set {@link Type} of the items stored in the array.
+   */
   public ConfigList() {
     this("", null, null);
   }
+
+  /**
+   * Creates an Array item with given key and items
+   * null is a valid parameter for items and subType.
+   * If items is null at creation, a empty list will be used instead.
+   * If subType is null at creation, the first item added (whether by items parameter or {@link #AddItem(BaseConfigItem)}) will set {@link Type} of the items stored in the array.
+   * @param key The key to be used if put in a group.
+   * @param items List of items to add to this array by default.
+   * @param subType The type of this array
+   * @throws InvalidParameterException if an item in the array doesn't match subType
+   */
   public ConfigList(String key, List<BaseConfigItem<?>> items, Type subType) {
     super(key,Type.ARRAY);
     if(items != null) {
@@ -60,14 +81,29 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
     }
   }
 
+  /**
+   * The amount of items in this Array Item
+   * @return count of {@link #getValue()}
+   */
   public int size() {
     return value.size();
   }
 
+  /**
+   * Gets the type that the this array item is limited to.
+   * if this value is null, the first item added with {@link #AddItem(BaseConfigItem)} will set this type.
+   * @return {@link Type} of the items.
+   */
   public Type getSubType() {
     return subType;
   }
 
+  /**
+   * Adds an item to this Array Item.
+   * if subType is null, then this item will set the type for this array based on it's type.
+   * @param item item to add.
+   * @throws InvalidParameterException type of item did not match {@link #getSubType()}
+   */
   public void AddItem(BaseConfigItem<?> item) {
     if(subType == null) {
       subType = item.getType();
@@ -125,5 +161,13 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
       }
     }
     value = list;
+  }
+
+  /**
+   * the return value is an unmodifiable view of the list {@link Collections#unmodifiableList(List)}
+   */
+  @Override
+  public List<BaseConfigItem<?>> getValue() {
+    return Collections.unmodifiableList(value);
   }
 }

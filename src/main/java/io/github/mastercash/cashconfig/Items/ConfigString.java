@@ -27,11 +27,28 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-public final class ConfigString extends BaseConfigItem<String> {
+import org.jetbrains.annotations.ApiStatus.Internal;
 
+import io.github.mastercash.cashconfig.Config;
+
+/**
+ * Configuration item for String values for {@link BaseConfigItem}.
+ */
+public final class ConfigString extends BaseConfigItem<String> {
+  /**
+   * Creates an empty String item with no key
+   * @deprecated Should not be used outside of {@link Config} or {@link BaseConfigItem} classes/subclasses. Use {@link #ConfigString(String, String)} instead.
+   */
+  @Internal
   public ConfigString() {
     this("","");
   }
+
+  /**
+   * Creates a new String item with given key and value
+   * @param key The key to be used if put in a group.
+   * @param str The default value contained in this item.
+   */
   public ConfigString(String key, String str) {
     super(key, Type.STRING);
     this.value = str != null ? str : "";
@@ -52,5 +69,4 @@ public final class ConfigString extends BaseConfigItem<String> {
     value = element.getAsString();
     
   }
-  
 }

@@ -28,11 +28,28 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
+import io.github.mastercash.cashconfig.Config;
+
+/**
+ * Configuration item for Numerical values for {@link BaseConfigItem}
+ */
 public final class ConfigNumber extends BaseConfigItem<Number> {
 
+  /**
+   * Creates an empty Number item with no key
+   * @deprecated Should not be used outside of {@link Config} or {@link BaseConfigItem} classes/subclasses. Use {@link #ConfigNumber(String, Number)} instead.
+   */
+  @Internal
   public ConfigNumber() {
     this("", 0);
   }
+
+  /**
+   * Creates a new Number item with given key and value
+   * @param key The key to be used if put in a group.
+   * @param value The default value contained in this item.
+   */
   public ConfigNumber(String key, Number value) {
     super(key, Type.NUMBER);
     this.value = value != null ? value : 0;

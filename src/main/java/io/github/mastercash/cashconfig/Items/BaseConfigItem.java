@@ -27,25 +27,60 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
+/**
+ * Base type of all Configuration Items.
+ * @param <T> type stored in this item. Supported types listed in {@link BaseConfigItem.Type}
+ */
 public abstract class BaseConfigItem<T> {
   protected final String key;
-  @Nullable
   protected T value;
   protected final Type type;
-  
+  /**
+   * Serializes data into the given {@link JsonObject}.
+   * This item is put in the {@link JsonObject} at key value given by {@link #getKey()}.
+   * It is put in as type given by {@link #getType()}
+   * @param parent {@link JsonObject} to add this item to.
+   */
   public abstract void toJson(JsonObject parent); 
+  /**
+   * Serializes data into the given {@link JsonArray}
+   * This item's {@link #getKey()} value is ignored in this case.
+   * It is put in as type given by {@link #getType()}
+   * @param parent
+   */
   public abstract void toJson(JsonArray parent);
+  /**
+   * Deserialize data from the {@link JsonElement} into this item.
+   * Treats the {@link JsonElement} as the type given by {@link #getType()}
+   * @param element
+   */
   public abstract void fromJson(JsonElement element);
 
+  /**
+   * Gets the type of this item.
+   * @see BaseConfigItem.Type
+   * @return type of this item.
+   */
   public Type getType() {
     return type;
   }
+
+  /**
+   * The key this value is stored under in an object.
+   * If from an array this value may be empty.
+   * @return
+   */
   public String getKey() {
     return key;
   }
-  @Nullable
+
+  /**
+   * Value stored by this item. Item type corresponds to this items type
+   * @see BaseConfigItem.Type
+   * @return value stored by this item type.
+   */
   public T getValue() {
     return value;
   }
@@ -89,6 +124,13 @@ public abstract class BaseConfigItem<T> {
     this.type = type;
   }
 
+  /**
+   * Gets the type associated with a given {@link JsonElement}.
+   * @deprecated For internal use.
+   * @param value element to check type for
+   * @return the type associated with this element. If not known/supported, null is returned.
+   */
+  @Internal
   public static Type getType(JsonElement value) {
     if(value.isJsonArray()) return Type.ARRAY;
     if(value.isJsonObject()) return Type.GROUP;
@@ -100,9 +142,26 @@ public abstract class BaseConfigItem<T> {
     }
     return null;
   }
+
+  /**
+   * Creates a new {@link BaseConfigItem} instance based on the {@link BaseConfigItem.Type} given.
+   * @deprecated For internal use.
+   * @param type Type to instantiate.
+   * @return new instance of an {@link BaseConfigItem}.
+   */
+  @Internal
   public static BaseConfigItem<?> getInstance(Type type) {
     return getInstance(type, "");
   }
+
+  /**
+   * Creates a new {@link BaseConfigItem} instance based on the {@link BaseConfigItem.Type} given.
+   * @deprecated For internal use.
+   * @param type Type to instantiate.
+   * @param key key to give item.
+   * @return new instance of an {@link BaseConfigItem}.
+   */
+  @Internal
   public static BaseConfigItem<?> getInstance(Type type, String key) {
     switch(type){
       case ARRAY:
@@ -119,11 +178,35 @@ public abstract class BaseConfigItem<T> {
     return null;
   }
 
+  /**
+   * Type representing the value of what is stored in {@link BaseConfigItem}
+   * Is a list of all supported types.
+   */
   public enum Type {
+    /**
+     * Used to represent a json object.
+     * @see ConfigGroup
+     */
     GROUP,
+    /**
+     * Used to represent a boolean value.
+     * @see ConfigBoolean
+     */
     BOOLEAN,
+    /**
+     * Used to represent a string value.
+     * @see ConfigString
+     */
     STRING,
+    /**
+     * Used to represent a Numerical value.
+     * @see ConfigNumber
+     */
     NUMBER,
+    /**
+     * Used to represent a json array.
+     * @see ConfigList
+     */
     ARRAY
   }
 }

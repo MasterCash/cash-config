@@ -27,13 +27,27 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import org.jetbrains.annotations.ApiStatus.Internal;
+import io.github.mastercash.cashconfig.Config;
 
+/**
+ * Configuration item for Boolean values for {@link BaseConfigItem}.
+ */
 public final class ConfigBoolean extends BaseConfigItem<Boolean> {
-
+   /**
+   * Creates an empty Boolean item with no key
+   * @deprecated Should not be used outside of {@link Config} or {@link BaseConfigItem} classes/subclasses. Use {@link #ConfigBoolean(String, Boolean)} instead.
+   */
+  @Internal
   public ConfigBoolean() {
     this("", false);
   }
 
+  /**
+   * Creates a new Boolean item with given key and value
+   * @param key The key to be used if put in a group.
+   * @param value the default value contained in this item.
+   */
   public ConfigBoolean(String key, Boolean value) {
     super(key, Type.BOOLEAN);
     this.value = value != null ? value : false;
