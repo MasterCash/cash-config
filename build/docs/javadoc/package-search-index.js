@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"io.github.mastercash.cashconfig"},{"l":"io.github.mastercash.cashconfig.Items"}];updateSearchResults();
