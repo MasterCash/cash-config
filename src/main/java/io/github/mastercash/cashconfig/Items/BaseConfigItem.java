@@ -154,7 +154,7 @@ public abstract class BaseConfigItem<T> {
   @Internal
   public static BaseConfigItem<?> getInstance(@NotNull Type type) {
     Objects.requireNonNull(type);
-    return getInstance(type);
+    return getInstance(type, "");
   }
 
   /**
