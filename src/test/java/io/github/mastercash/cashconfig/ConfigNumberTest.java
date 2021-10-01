@@ -47,4 +47,14 @@ public class ConfigNumberTest {
     test.toJson(json);
     Assert.assertEquals("Int Number to JSON", 10.2f, json.get("test").getAsNumber().floatValue(), 0.0002);
   }
+
+  @Test
+  public void setValue() {
+    var test = new ConfigNumber("", 10);
+    test.setValue(11);
+    Assert.assertEquals(11, test.getValue());
+    test = new ConfigNumber();
+    test.setValue(5);
+    Assert.assertEquals(5, test.getValue());
+  }
 }

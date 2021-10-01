@@ -144,4 +144,35 @@ public class ConfigListTest {
     test.fromJson(json);
     Assert.assertEquals("List from JSON Group with List", 3, ((ConfigList)((ConfigGroup) test.getValue().get(0)).GetItem("list")).size());
   }
+
+  @Test
+  public void addItem() {
+    var test = new ConfigList();
+    var item = new ConfigString("", "Test");
+    test.AddItem(item);
+    Assert.assertEquals(1, test.size());
+    Assert.assertEquals(item, test.getValue().get(0));
+  }
+
+  @Test
+  public void getItem() {
+    var item1 = new ConfigString();
+    var item2 = new ConfigString();
+    var test = new ConfigList("", of(item1), Type.STRING);
+    test.AddItem(item2);
+    Assert.assertEquals(item1, test.GetItem(0));
+    Assert.assertEquals(item2, test.GetItem(1));
+  }
+
+  @Test
+  public void removeItem() {
+    var item1 = new ConfigString();
+    var item2 = new ConfigString();
+    var test = new ConfigList("", of(item1), Type.STRING);
+    test.AddItem(item2);
+    Assert.assertEquals(item1, test.RemoveItem(0));
+    Assert.assertEquals(1, test.size());
+    Assert.assertEquals(item2, test.RemoveItem(0));
+    Assert.assertEquals(0, test.size());
+  }
 }

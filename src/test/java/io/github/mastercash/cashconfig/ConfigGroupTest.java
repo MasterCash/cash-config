@@ -29,6 +29,7 @@ import org.junit.Assert;
 import io.github.mastercash.cashconfig.Items.ConfigBoolean;
 import io.github.mastercash.cashconfig.Items.ConfigGroup;
 import io.github.mastercash.cashconfig.Items.ConfigList;
+import io.github.mastercash.cashconfig.Items.ConfigNumber;
 import io.github.mastercash.cashconfig.Items.ConfigString;
 import io.github.mastercash.cashconfig.Items.BaseConfigItem.Type;
 import static com.google.common.collect.ImmutableList.of;
@@ -88,6 +89,33 @@ public class ConfigGroupTest {
     Assert.assertEquals("Filled Group from JSON has items", true, test.size() > 0);
     Assert.assertEquals("Filled Group from JSON correct value", "test", (String) test.GetItem("str").getValue());
     Assert.assertEquals("Filled Group from JSON nested Object", true, (Boolean) ((ConfigGroup) test.GetItem("obj")).GetItem("test").getValue());
+  }
+
+  @Test
+  public void removeItem() {
+    var test = new ConfigGroup();
+    test.AddItem(new ConfigString("test", "test"));
+    test.RemoveItem("test");
+    Assert.assertEquals("Removed item", 0, test.size());
+  }
+
+  @Test
+  public void addItem() {
+    var test = new ConfigGroup();
+    var str = new ConfigString("test", "test");
+    test.AddItem(str);
+    Assert.assertEquals(true, test.HasItem("test"));
+    Assert.assertEquals(1, test.size());
+    Assert.assertEquals(str, test.GetItem("test"));
+  }
+
+  @Test
+  public void setItem() {
+    var str = new ConfigString("test", "test");
+    var num = new ConfigNumber("test", 0);
+    var test = new ConfigGroup("", of(str));
+    test.SetItem(num);
+    Assert.assertEquals(num, test.GetItem("test"));
   }
 
 }

@@ -67,7 +67,7 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
   public ConfigList(@NotNull String key, List<BaseConfigItem<?>> items, Type subType) {
     super(Objects.requireNonNull(key),Type.ARRAY);
     if(items != null) {
-      value = items;
+      value = new ArrayList<>(items);
     }
     else {
       value = new ArrayList<>();
@@ -142,7 +142,7 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param index position to remove
    * @return item if removed, null otherwise
    */
-  public BaseConfigItem<?> RemoveValue(int index) {
+  public BaseConfigItem<?> RemoveItem(int index) {
     Objects.checkIndex(index, value.size());
     return value.remove(index);
   }
