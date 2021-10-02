@@ -4,10 +4,6 @@ name: Javadocs
 
 # Controls when the workflow will run
 on:
-  repository_dispatch:
-    types: [event_type]
-  schedule:
-    - cron: '5 * * * *'
   release:
     types: [created, edited]
   
