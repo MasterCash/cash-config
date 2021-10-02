@@ -34,7 +34,7 @@ jobs:
           cd ./build/docs/javadoc
           git init
           git remote add origin git@github.com:MasterCash/cash-config.git
-          git add ./*
+          git add -f --all
           git commit - m "commit javadocs"
       - name: Push Changes
         uses: ad-m/github-push-action@master
