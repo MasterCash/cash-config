@@ -4,7 +4,8 @@ name: Javadocs
 
 # Controls when the workflow will run
 on:
-  workflow_call:
+  schedule:
+    - cron: '5 * * * *'
   release:
     types: [created]
   
