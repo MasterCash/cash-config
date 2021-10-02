@@ -4,10 +4,6 @@ name: Javadocs
 
 # Controls when the workflow will run
 on:
-  repository_dispatch:
-    types: [event_type]
-  schedule:
-    - cron: '5 * * * *'
   release:
     types: [created, edited]
   
@@ -35,7 +31,7 @@ jobs:
           git init
           git remote add origin git@github.com:MasterCash/cash-config.git
           git add -f --all
-          git commit - m "commit javadocs"
+          git commit -m "commit javadocs"
       - name: Push Changes
         uses: ad-m/github-push-action@master
         with:
