@@ -27,12 +27,14 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.apache.logging.log4j.Level;
+import org.jetbrains.annotations.NotNull;
 
 import io.github.mastercash.cashconfig.Constants;
 
@@ -62,10 +64,10 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param subType The type of this array
    * @throws InvalidParameterException if an item in the array doesn't match subType
    */
-  public ConfigList(String key, List<BaseConfigItem<?>> items, Type subType) {
-    super(key,Type.ARRAY);
+  public ConfigList(@NotNull String key, List<BaseConfigItem<?>> items, Type subType) {
+    super(Objects.requireNonNull(key),Type.ARRAY);
     if(items != null) {
-      value = items;
+      value = new ArrayList<>(items);
     }
     else {
       value = new ArrayList<>();
@@ -89,6 +91,16 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
     return value.size();
   }
 
+  @Override
+  public void setValue(@NotNull List<BaseConfigItem<?>> value) {
+    Objects.requireNonNull(value);
+    if(value.size() == 0) return;
+    for(var item : value) {
+      if(!item.type.equals(type)) throw new IllegalArgumentException("type " + item.type.toString() + " from item in value doesn't match list type " + type.toString());
+    }
+    this.value = value;
+  }
+
   /**
    * Gets the type that the this array item is limited to.
    * if this value is null, the first item added with {@link #AddItem(BaseConfigItem)} will set this type.
@@ -104,7 +116,8 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param item item to add.
    * @throws InvalidParameterException type of item did not match {@link #getSubType()}
    */
-  public void AddItem(BaseConfigItem<?> item) {
+  public void AddItem(@NotNull BaseConfigItem<?> item) {
+    Objects.requireNonNull(item);
     if(subType == null) {
       subType = item.getType();
     }
@@ -114,8 +127,29 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
     value.add(item);
   }
 
+  /**
+   * Returns the item at the given index
+   * @param index position in the list 
+   * @return item that was found
+   */
+  public BaseConfigItem<?> GetItem(int index) {
+    Objects.checkIndex(index, value.size());
+    return value.get(index);
+  }
+
+  /**
+   * Remove an Item from the list
+   * @param index position to remove
+   * @return item if removed, null otherwise
+   */
+  public BaseConfigItem<?> RemoveItem(int index) {
+    Objects.checkIndex(index, value.size());
+    return value.remove(index);
+  }
+
   @Override
-  public void toJson(JsonObject parent) {
+  public void toJson(@NotNull JsonObject parent) {
+    Objects.requireNonNull(parent);
     var arr = new JsonArray();
     for(var item : value) {
       item.toJson(arr);
@@ -124,7 +158,8 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
   }
 
   @Override
-  public void toJson(JsonArray parent) {
+  public void toJson(@NotNull JsonArray parent) {
+    Objects.requireNonNull(parent);
     var arr = new JsonArray();
     for(var item: value) {
       item.toJson(arr);
@@ -133,7 +168,8 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
   }
 
   @Override
-  public void fromJson(JsonElement element) {
+  public void fromJson(@NotNull JsonElement element) {
+    Objects.requireNonNull(element);
     var list = new ArrayList<BaseConfigItem<?>>();
     var arr = element.getAsJsonArray();
     boolean notInitialized = subType == null;

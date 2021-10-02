@@ -23,12 +23,14 @@
  */
 package io.github.mastercash.cashconfig.Items;
 
+import java.util.Objects;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.jetbrains.annotations.ApiStatus.Internal;
-import io.github.mastercash.cashconfig.Config;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Configuration item for Boolean values for {@link BaseConfigItem}.
@@ -36,9 +38,8 @@ import io.github.mastercash.cashconfig.Config;
 public final class ConfigBoolean extends BaseConfigItem<Boolean> {
    /**
    * Creates an empty Boolean item with no key
-   * @deprecated Should not be used outside of {@link Config} or {@link BaseConfigItem} classes/subclasses. Use {@link #ConfigBoolean(String, Boolean)} instead.
+   * If adding to a {@link ConfigGroup}, use {@link #ConfigBoolean(String, Boolean)} instead.
    */
-  @Internal
   public ConfigBoolean() {
     this("", false);
   }
@@ -48,23 +49,26 @@ public final class ConfigBoolean extends BaseConfigItem<Boolean> {
    * @param key The key to be used if put in a group.
    * @param value the default value contained in this item.
    */
-  public ConfigBoolean(String key, Boolean value) {
-    super(key, Type.BOOLEAN);
+  public ConfigBoolean(@NotNull String key, Boolean value) {
+    super(Objects.requireNonNull(key), Type.BOOLEAN);
     this.value = value != null ? value : false;
   }
 
   @Override
-  public void toJson(JsonObject parent) {
+  public void toJson(@NotNull JsonObject parent) {
+    Objects.requireNonNull(parent);
     parent.add(key, new JsonPrimitive(value));
   }
 
   @Override
-  public void toJson(JsonArray parent) {
+  public void toJson(@NotNull JsonArray parent) {
+    Objects.requireNonNull(parent);
     parent.add(new JsonPrimitive(value));
   }
 
   @Override
-  public void fromJson(JsonElement element) {
+  public void fromJson(@NotNull JsonElement element) {
+    Objects.requireNonNull(element);
     value = element.getAsBoolean();
   }
   

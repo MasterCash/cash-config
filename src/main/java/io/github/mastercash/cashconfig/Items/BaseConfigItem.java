@@ -23,10 +23,13 @@
  */
 package io.github.mastercash.cashconfig.Items;
 
+import java.util.Objects;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 /**
@@ -43,20 +46,20 @@ public abstract class BaseConfigItem<T> {
    * It is put in as type given by {@link #getType()}
    * @param parent {@link JsonObject} to add this item to.
    */
-  public abstract void toJson(JsonObject parent); 
+  public abstract void toJson(@NotNull JsonObject parent); 
   /**
    * Serializes data into the given {@link JsonArray}
    * This item's {@link #getKey()} value is ignored in this case.
    * It is put in as type given by {@link #getType()}
    * @param parent
    */
-  public abstract void toJson(JsonArray parent);
+  public abstract void toJson(@NotNull JsonArray parent);
   /**
    * Deserialize data from the {@link JsonElement} into this item.
    * Treats the {@link JsonElement} as the type given by {@link #getType()}
    * @param element
    */
-  public abstract void fromJson(JsonElement element);
+  public abstract void fromJson(@NotNull JsonElement element);
 
   /**
    * Gets the type of this item.
@@ -85,29 +88,24 @@ public abstract class BaseConfigItem<T> {
     return value;
   }
 
-  protected static <T> boolean validType(JsonElement element, Class<T> clazz) {
-    if(element.isJsonObject()) {
-      return clazz.equals(ConfigGroup.class);
-    }
-    if(element.isJsonArray()) {
-      return clazz.equals(ConfigList.class);
-    }
-    if(element.isJsonPrimitive()) {
-      var prim = element.getAsJsonPrimitive();
-      if(prim.isNumber()) {
-        return clazz.equals(ConfigNumber.class);
-      }
-      if(prim.isString()) {
-        return clazz.equals(ConfigString.class);
-      }
-      if(prim.isBoolean()) {
-        return clazz.equals(ConfigBoolean.class);
-      }
-    }
-    return false;
+  /**
+   * Set the value of this item.
+   * @param value value to use instead of current value.
+   */
+  public void setValue(@NotNull T value) {
+    this.value = Objects.requireNonNull(value);
   }
 
-  protected static boolean validType(JsonElement element, Type type) {
+
+  /**
+   * Checks if the given json element matches the given type
+   * @param element json element to use
+   * @param type type to check with
+   * @return true if element matches type, false otherwise
+   */
+  protected static boolean validType(@NotNull JsonElement element, @NotNull Type type) {
+    Objects.requireNonNull(element);
+    Objects.requireNonNull(type);
     if(element.isJsonObject()) return type.equals(Type.GROUP);
     if(element.isJsonArray()) return type.equals(Type.ARRAY);
     if(element.isJsonPrimitive()) {
@@ -119,19 +117,24 @@ public abstract class BaseConfigItem<T> {
     return false;
   }
 
-  protected BaseConfigItem(String key, Type type) {
-    this.key = key;
-    this.type = type;
+  /**
+   * BaseConfigItem constructor.
+   * @param key
+   * @param type
+   */
+  protected BaseConfigItem(@NotNull String key, @NotNull Type type) {
+    this.key = Objects.requireNonNull(key);
+    this.type = Objects.requireNonNull(type);
   }
 
   /**
    * Gets the type associated with a given {@link JsonElement}.
-   * @deprecated For internal use.
    * @param value element to check type for
    * @return the type associated with this element. If not known/supported, null is returned.
    */
   @Internal
-  public static Type getType(JsonElement value) {
+  public static Type getType(@NotNull JsonElement value) {
+    Objects.requireNonNull(value);
     if(value.isJsonArray()) return Type.ARRAY;
     if(value.isJsonObject()) return Type.GROUP;
     if(value.isJsonPrimitive()) {
@@ -145,24 +148,25 @@ public abstract class BaseConfigItem<T> {
 
   /**
    * Creates a new {@link BaseConfigItem} instance based on the {@link BaseConfigItem.Type} given.
-   * @deprecated For internal use.
    * @param type Type to instantiate.
    * @return new instance of an {@link BaseConfigItem}.
    */
   @Internal
-  public static BaseConfigItem<?> getInstance(Type type) {
+  public static BaseConfigItem<?> getInstance(@NotNull Type type) {
+    Objects.requireNonNull(type);
     return getInstance(type, "");
   }
 
   /**
    * Creates a new {@link BaseConfigItem} instance based on the {@link BaseConfigItem.Type} given.
-   * @deprecated For internal use.
    * @param type Type to instantiate.
    * @param key key to give item.
    * @return new instance of an {@link BaseConfigItem}.
    */
   @Internal
-  public static BaseConfigItem<?> getInstance(Type type, String key) {
+  public static BaseConfigItem<?> getInstance(@NotNull Type type, @NotNull String key) {
+    Objects.requireNonNull(type);
+    Objects.requireNonNull(key);
     switch(type){
       case ARRAY:
         return new ConfigList(key, null, null);

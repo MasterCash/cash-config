@@ -23,13 +23,13 @@
  */
 package io.github.mastercash.cashconfig.Items;
 
+import java.util.Objects;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.jetbrains.annotations.ApiStatus.Internal;
-
-import io.github.mastercash.cashconfig.Config;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Configuration item for String values for {@link BaseConfigItem}.
@@ -37,9 +37,8 @@ import io.github.mastercash.cashconfig.Config;
 public final class ConfigString extends BaseConfigItem<String> {
   /**
    * Creates an empty String item with no key
-   * @deprecated Should not be used outside of {@link Config} or {@link BaseConfigItem} classes/subclasses. Use {@link #ConfigString(String, String)} instead.
+   * If adding to a {@link ConfigGroup}, use {@link #ConfigString(String, String)} instead.
    */
-  @Internal
   public ConfigString() {
     this("","");
   }
@@ -49,23 +48,26 @@ public final class ConfigString extends BaseConfigItem<String> {
    * @param key The key to be used if put in a group.
    * @param str The default value contained in this item.
    */
-  public ConfigString(String key, String str) {
-    super(key, Type.STRING);
+  public ConfigString(@NotNull String key, String str) {
+    super(Objects.requireNonNull(key), Type.STRING);
     this.value = str != null ? str : "";
   }
 
   @Override
-  public void toJson(JsonObject parent) {
+  public void toJson(@NotNull JsonObject parent) {
+    Objects.requireNonNull(parent);
     parent.addProperty(key, value);
   }
 
   @Override
-  public void toJson(JsonArray parent) {
+  public void toJson(@NotNull JsonArray parent) {
+    Objects.requireNonNull(parent);
     parent.add(value);
   }
 
   @Override
-  public void fromJson(JsonElement element) {
+  public void fromJson(@NotNull JsonElement element) {
+    Objects.requireNonNull(element);
     value = element.getAsString();
     
   }

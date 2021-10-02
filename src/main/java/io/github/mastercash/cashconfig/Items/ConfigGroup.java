@@ -29,10 +29,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Configuration item for a json object for {@link BaseConfigItem}
@@ -56,12 +59,11 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param items List of items to add to this group by default.
    * @throws InvalidParameterException Two items in items have the same key.
    */
-  public ConfigGroup(String key, List<BaseConfigItem<?>> items) {
-    super(key, Type.GROUP);
+  public ConfigGroup(@NotNull String key, List<BaseConfigItem<?>> items) {
+    super(Objects.requireNonNull(key), Type.GROUP);
     _items = new HashMap<>();
-    value = items != null ? items : new ArrayList<>();
-
-    for(var item : value) {
+    if(items == null) items = new ArrayList<>();
+    for(var item : items) {
       if(_items.containsKey(item.getKey())) {
         throw new InvalidParameterException("Duplicate key: " + item.getKey());
       }
@@ -74,7 +76,7 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @return count of {@link #getValue()}
    */
   public int size() {
-    return value.size();
+    return _items.size();
   }
 
   /**
@@ -82,10 +84,10 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param item item to add.
    * @return true if added false if key for that item already exists.
    */
-  public boolean AddItem(BaseConfigItem<?> item) {
+  public boolean AddItem(@NotNull BaseConfigItem<?> item) {
+    Objects.requireNonNull(item);
     if(_items.containsKey(item.getKey())) return false;
     _items.put(item.getKey(), item);
-    this.value.add(item);
     return true;
   }
 
@@ -94,8 +96,19 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param key key to look for.
    * @return the item if found, otherwise null
    */
-  public BaseConfigItem<?> GetItem(String key) {
+  public BaseConfigItem<?> GetItem(@NotNull String key) {
+    Objects.requireNonNull(key);
     return _items.get(key);
+  }
+
+  public BaseConfigItem<?> RemoveItem(@NotNull String key) {
+    Objects.requireNonNull(key);
+    return _items.remove(key);
+  }
+
+  public BaseConfigItem<?> SetItem(@NotNull BaseConfigItem<?> item) {
+    Objects.requireNonNull(item);
+    return _items.put(item.getKey(), item);
   }
 
   /**
@@ -103,30 +116,34 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param key key to check
    * @return true if item exits, false otherwise.
    */
-  public boolean HasItem(String key) {
+  public boolean HasItem(@NotNull String key) {
+    Objects.requireNonNull(key);
     return _items.containsKey(key);
   }
 
   @Override
-  public void toJson(JsonObject parent) {
+  public void toJson(@NotNull JsonObject parent) {
+    Objects.requireNonNull(parent);
     var element = new JsonObject();
-    for(var item : value) {
+    for(var item : _items.values()) {
       item.toJson(element);
     }
     parent.add(key, element);
   }
 
   @Override
-  public void toJson(JsonArray parent) {
+  public void toJson(@NotNull JsonArray parent) {
+    Objects.requireNonNull(parent);
     var element = new JsonObject();
-    for(var item : value) {
+    for(var item : _items.values()) {
       item.toJson(element);
     }
     parent.add(element);
   }
 
   @Override
-  public void fromJson(JsonElement element) {
+  public void fromJson(@NotNull JsonElement element) {
+    Objects.requireNonNull(element);
     var obj = element.getAsJsonObject();
     var empty = _items.isEmpty();
     for(var entry : obj.entrySet()) {
@@ -135,13 +152,11 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
           var item = new ConfigList(entry.getKey(), null, null);
           item.fromJson(entry.getValue());
           _items.put(entry.getKey(), item);
-          value.add(item);
         }
         else if(entry.getValue().isJsonObject()) {
           var item = new ConfigGroup(entry.getKey(), null);
           item.fromJson(entry.getValue());
           _items.put(entry.getKey(), item);
-          value.add(item);
         }
         else if(entry.getValue().isJsonPrimitive()) {
           var prim = entry.getValue().getAsJsonPrimitive();
@@ -149,19 +164,16 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
             var item = new ConfigString(entry.getKey(), null);
             item.fromJson(prim);
             _items.put(entry.getKey(), item);
-            value.add(item);
           }
           else if(prim.isNumber()) {
             var item = new ConfigNumber(entry.getKey(), null);
             item.fromJson(prim);
             _items.put(entry.getKey(), item);
-            value.add(item);
           }
           else if(prim.isBoolean()) {
             var item = new ConfigBoolean(entry.getKey(), null);
             item.fromJson(prim);
             _items.put(entry.getKey(), item);
-            value.add(item);
           }
         }
       } else {
@@ -178,7 +190,7 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
    */
   @Override
   public List<BaseConfigItem<?>> getValue() {
-    return Collections.unmodifiableList(value);
+    return Collections.unmodifiableList(new ArrayList<>(_items.values()));
   }
 
 }

@@ -47,5 +47,12 @@ public class ConfigBooleanTest {
     var bool = obj.get("test").getAsJsonPrimitive().getAsBoolean();
     Assert.assertEquals("Has Bool in JSON", true, bool);
   }
+
+  @Test
+  public void changeValue() {
+    var test = new ConfigBoolean();
+    test.setValue(true);
+    Assert.assertEquals(true, test.getValue());
+  }
   
 }

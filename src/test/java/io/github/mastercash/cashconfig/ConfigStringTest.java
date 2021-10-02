@@ -47,4 +47,13 @@ public class ConfigStringTest {
     test.fromJson(new JsonPrimitive("test"));
     Assert.assertEquals("String from JSON", "test", test.getValue());
   }
+
+  @Test
+  public void setValue() {
+    var test = new ConfigString();
+    test.setValue("test");
+    Assert.assertEquals("test", test.getValue());
+    test = new ConfigString("","other");
+    Assert.assertEquals("other", test.getValue());
+  }
 }
