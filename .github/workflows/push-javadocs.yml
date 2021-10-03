@@ -36,4 +36,5 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           branch: "refs/heads/javadocs"
+          directory: "./build/docs/javadoc"
           force: true
