@@ -57,4 +57,25 @@ public class ConfigNumberTest {
     test.setValue(5);
     Assert.assertEquals(5, test.getValue());
   }
+
+  @Test
+  public void isItem() {
+    var test = new ConfigNumber();
+    Assert.assertEquals(false, test.IsBoolean());
+    Assert.assertEquals(false, test.IsGroup());
+    Assert.assertEquals(false, test.IsList());
+    Assert.assertEquals(true, test.IsNumber());
+    Assert.assertEquals(false, test.IsString());
+  }
+
+  @Test
+  public void asItem() {
+    var test = new ConfigNumber();
+    Assert.assertEquals(test, test.AsNumber());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsBoolean());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsGroup());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsList());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsString());
+  }
+
 }

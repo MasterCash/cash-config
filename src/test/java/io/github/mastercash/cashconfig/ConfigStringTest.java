@@ -56,4 +56,25 @@ public class ConfigStringTest {
     test = new ConfigString("","other");
     Assert.assertEquals("other", test.getValue());
   }
+
+  @Test
+  public void isItem() {
+    var test = new ConfigString();
+    Assert.assertEquals(false, test.IsBoolean());
+    Assert.assertEquals(false, test.IsGroup());
+    Assert.assertEquals(false, test.IsList());
+    Assert.assertEquals(false, test.IsNumber());
+    Assert.assertEquals(true, test.IsString());
+  }
+
+  @Test
+  public void asItem() {
+    var test = new ConfigString();
+    Assert.assertEquals(test, test.AsString());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsBoolean());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsGroup());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsList());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsNumber());
+  }
+
 }

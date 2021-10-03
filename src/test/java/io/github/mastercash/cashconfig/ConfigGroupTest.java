@@ -118,4 +118,23 @@ public class ConfigGroupTest {
     Assert.assertEquals(num, test.GetItem("test"));
   }
 
+  @Test
+  public void isItem() {
+    var test = new ConfigGroup();
+    Assert.assertEquals(false, test.IsBoolean());
+    Assert.assertEquals(true, test.IsGroup());
+    Assert.assertEquals(false, test.IsList());
+    Assert.assertEquals(false, test.IsNumber());
+    Assert.assertEquals(false, test.IsString());
+  }
+
+  @Test
+  public void asItem() {
+    var test = new ConfigGroup();
+    Assert.assertEquals(test, test.AsGroup());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsBoolean());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsList());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsNumber());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsString());
+  }
 }

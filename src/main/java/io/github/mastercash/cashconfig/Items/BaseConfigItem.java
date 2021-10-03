@@ -128,6 +128,110 @@ public abstract class BaseConfigItem<T> {
   }
 
   /**
+   * Checks if this item is a group item
+   * @return true if group item, false otherwise
+   */
+  public boolean IsGroup() {
+    return type.equals(Type.GROUP);
+  }
+
+  /**
+   * gets this item as a group item
+   * @return this as a group item
+   * @throws IllegalStateException if not a group item
+   */
+  public ConfigGroup AsGroup() {
+    if(!IsGroup()) throw new IllegalStateException("Item is not a Group");
+    return (ConfigGroup) this;
+  }
+
+  /**
+   * Checks if this item is a list item
+   * @return true if list item, false otherwise
+   */
+  public boolean IsList() {
+    return type.equals(Type.ARRAY);
+  }
+  
+  /**
+   * Checks if this item is a list item with given subtype
+   * @param subType type to check with
+   * @return true if list item with given subtype, false otherwise
+   */
+  public boolean IsList(Type subType) {
+    if(IsList()) {
+      var itemType = ((ConfigList)this).getSubType(); 
+      return subType == null || itemType == null ? subType == itemType : subType.equals(itemType);
+    }
+    return false;
+  }
+  /**
+   * Gets this item as a list item
+   * @return this as list item
+   * @throws IllegalStateException if not a list item
+   */
+  public ConfigList AsList() {
+    if(!IsList()) throw new IllegalStateException("Item is not a List");
+    return (ConfigList) this;
+  }
+
+  /**
+   * Checks if this item is a boolean item
+   * @return true if boolean item, false otherwise
+   */
+  public boolean IsBoolean() {
+    return type.equals(Type.BOOLEAN);
+  }
+
+  /**
+   * Gets this item as a boolean item
+   * @return this as boolean item
+   * @throws IllegalStateException if not a boolean item
+   */
+  public ConfigBoolean AsBoolean() {
+    if(!IsBoolean()) throw new IllegalStateException("Item is not a Boolean");
+    return (ConfigBoolean) this;
+  }
+
+  /**
+   * Checks if this item is a number item
+   * @return true if number item, false otherwise
+   */
+  public boolean IsNumber() {
+    return type.equals(Type.NUMBER);
+  }
+
+  /**
+   * Gets this item as a number item
+   * @return this as number item
+   * @throws IllegalStateException if not a number item
+   */
+  public ConfigNumber AsNumber() {
+    if(!IsNumber()) throw new IllegalStateException("Item is not a Number");
+    return (ConfigNumber) this;
+  }
+
+  /**
+   * Checks if this item is a string item
+   * @return true if string item, false otherwise
+   */
+  public boolean IsString() {
+    return type.equals(Type.STRING);
+  }
+
+  /**
+   * Gets this item as a string item
+   * @return this as string item
+   * @throws IllegalStateException if not a string item
+   */
+  public ConfigString AsString() {
+    if(!IsString()) throw new IllegalStateException("Item is not a String");
+    return (ConfigString) this;
+  }
+
+
+
+  /**
    * Gets the type associated with a given {@link JsonElement}.
    * @param value element to check type for
    * @return the type associated with this element. If not known/supported, null is returned.
