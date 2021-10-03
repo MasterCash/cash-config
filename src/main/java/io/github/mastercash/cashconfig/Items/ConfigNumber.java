@@ -46,6 +46,14 @@ public final class ConfigNumber extends BaseConfigItem<Number> {
   }
 
   /**
+   * Creates a new Number item with given key
+   * @param key The key to be used if put in a group.
+   */
+  public ConfigNumber(@NotNull String key) {
+    this(key, 0);
+  }
+
+  /**
    * Creates a new Number item with given key and value
    * @param key The key to be used if put in a group.
    * @param value The default value contained in this item.

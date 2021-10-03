@@ -44,6 +44,14 @@ public final class ConfigString extends BaseConfigItem<String> {
   }
 
   /**
+   * Creates a new String item with given key
+   * @param key The key to be used if put in a group.
+   */
+  public ConfigString(@NotNull String key) {
+    this(key, "");
+  }
+
+  /**
    * Creates a new String item with given key and value
    * @param key The key to be used if put in a group.
    * @param str The default value contained in this item.

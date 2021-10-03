@@ -52,6 +52,14 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
   }
 
   /**
+   * Creates an empty Group item with given key.
+   * @param key The key to be used if put in a group.
+   */
+  public ConfigGroup(@NotNull String key) {
+    this(key, null);
+  }
+
+  /**
    * Creates a Group item with given key and items.
    * null is a valid parameter for items
    * If items is null at creation, an empty list will be used instead.
@@ -193,4 +201,14 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
     return Collections.unmodifiableList(new ArrayList<>(_items.values()));
   }
 
+
+  @Override
+  public void setValue(@NotNull List<BaseConfigItem<?>> value) {
+    Objects.requireNonNull(value);
+    _items = new HashMap<>();
+    for(var item : value) {
+      SetItem(item);
+    }
+    return;
+  }
 }

@@ -30,14 +30,38 @@ Usage: `getType()`
 ##### `value`
 returns the value being stored by configuration. The type of this value is based on the `type`.
 
-Usage: `getValue()`
+Usage: `getValue()`, `setValue(value)`
 ##### `key`
 returns the key string used to identify this item in a JSON object. This field is required if the item will be in a group. This field is not required for items being added to a JSON array. If being added to an array, `""` is a valid value.
 
 Usage: `getKey()`
 
+<br>
+
+Additionally, the base class has helpful functions for casting and verifying the type of item this is:
+```java
+// These check if the item is a certain type
+item.IsGroup()
+item.IsList()
+item.IsList(subType)
+item.IsNumber()
+item.IsBoolean()
+item.IsString()
+
+// These cast item as a certain type, throws IllegalStateException if casted as the wrong type.
+item.AsGroup()
+item.AsList()
+item.AsNumber()
+item.AsBoolean()
+item.AsString()
+```
+
+<br>
+
 All ConfigItems live under: 
 `io.github.mastercash.cashconfig.items.*`
+
+<br/>
 
 #### `ConfigBoolean`
 ----
@@ -48,10 +72,14 @@ This type is used for storing/loading boolean values in a configuration.
 Usage:
 ```java
 // if being added to a group
-var item = new ConfigBoolean(<key>,<value>);
+var item = new ConfigBoolean(<key>);
+var item = new ConfigBoolean(<key>, <value>);
 // if being added to an array
-var item = new ConfigBoolean("",<value>);
+var item = new ConfigBoolean();
+var item = new ConfigBoolean("", <value>);
 ```
+
+<br/>
 
 #### `ConfigString`
 ---
@@ -62,10 +90,14 @@ This type is used for storing/loading string values in a configuration.
 Usage:
 ```java
 // if being added to a group
-var item = new ConfigString(<key>,<value>);
+var item = new ConfigString(<key>);
+var item = new ConfigString(<key>, <value>);
 // if being added to an array
-var item = new ConfigString("",<value>);
+var item = new ConfigString();
+var item = new ConfigString("", <value>);
 ```
+
+<br/>
 
 #### `ConfigNumber`
 ---
@@ -76,10 +108,15 @@ This type is used for storing/loading numeric values in a configuration.
 Usage:
 ```java
 // if being added to a group
-var item = new ConfigNumber(<key>,<value>);
+var item = new ConfigNumber(<key>);
+var item = new ConfigNumber(<key>, <value>);
 // if being added to an array
+var item = new ConfigNumber();
 var item = new ConfigNumber("",<value>);
 ```
+
+<br/>
+
 #### `ConfigGroup`
 ---
 Type enum: `Type.GROUP`
@@ -93,10 +130,12 @@ Note: `getValue()` returns an Immutable version of the list of items within. to 
 Usage:
 ```java
 // if being added to a group
-var item = new ConfigGroup(<key>,<list of Items>);
+var item = new ConfigGroup(<key>);
+var item = new ConfigGroup(<key>, <list of Items>);
 // if being added to an array
-var item = new ConfigGroup("",<list of items>);
-// also acceptable to give null and add the items later
+var item = new ConfigGroup();
+var item = new ConfigGroup("", <list of items>);
+// also acceptable to give null
 var item = new ConfigGroup(<key>, null);
 var item = new ConfigGroup("", null);
 ```
@@ -110,7 +149,13 @@ item.AddItem(<item>);
 item.HasItem(<key>);
 // gets the item with the given key in the group
 item.GetItem(<key>);
+// sets the given item in the group, will overwrite existing value
+item.SetItem(<item>);
+// remove the item at the given key from the group
+item.RemoveItem(<key>);
 ```
+
+<br>
 
 #### `ConfigList`
 ---
@@ -125,24 +170,29 @@ Note: `getValue()` returns an Immutable version of the list of items within. to 
 Usage:
 ```java
 // if being added to a group
-var item = new ConfigList(<key>,<list of Items>);
+var item = new ConfigList(<key>);
+var item = new ConfigList(<key>, <item>);
+var item = new ConfigList(<key>, <list of Items>, <type of items>);
 // if being added to an array
-var item = new ConfigList("",<list of items>);
+var item = new ConfigList();
+var item = new ConfigList("", <item>);
+var item = new ConfigList("", <list of items>, <type of items>);
 ```
 Additional Methods:
 ```java
-// gets the number of items in this group
+// gets the number of items in this list
 item.size();
-// add an item to the group, the key of the item needs to be unique to this group
+// add an item to the list, the key of the item doesn't matter
 item.AddItem(<item>);
-// checks to see if a key exists currently in the group
-item.HasItem(<key>);
-// gets the item with the given key in the group
-item.GetItem(<key>);
+// gets the item at the given index in the list
+item.GetItem(<index>);
+// removes the item at the given index in the list
+item.RemoveItem(<index>);
 // gets the type of the items in the array (if array empty possibly null)
 item.getSubType();
 ```
 
+<br>
 
 ### Config
 The main entry point is the `Config` class. This lives in the `io.github.mastercash.cashconfig`.
@@ -151,6 +201,7 @@ Currently, data cannot be changed but a default can be built and saved if file d
 
 ```java
 // Creates a new config with the given defaults to be saved if file doesn't exist.
+var config = Config(<item>, <File>);
 var config = Config(<list of items>, <File>);
 // Will save the file with the current data (useful for overriding current data with a new set).
 config.saveFile();

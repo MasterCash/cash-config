@@ -69,7 +69,7 @@ public class ConfigListTest {
 
   @Test
   public void toJSONEmpty() {
-    var test = new ConfigList("test", null, null);
+    var test = new ConfigList("test");
     var json = new JsonObject();
     test.toJson(json);
     Assert.assertEquals("List to JSON empty", true, json.get("test").getAsJsonArray().size() == 0);
@@ -174,5 +174,25 @@ public class ConfigListTest {
     Assert.assertEquals(1, test.size());
     Assert.assertEquals(item2, test.RemoveItem(0));
     Assert.assertEquals(0, test.size());
+  }
+
+  @Test
+  public void isItem() {
+    var test = new ConfigList();
+    Assert.assertEquals(false, test.IsBoolean());
+    Assert.assertEquals(false, test.IsGroup());
+    Assert.assertEquals(true, test.IsList());
+    Assert.assertEquals(false, test.IsNumber());
+    Assert.assertEquals(false, test.IsString());
+  }
+
+  @Test
+  public void asItem() {
+    var test = new ConfigList();
+    Assert.assertEquals(test, test.AsList());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsBoolean());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsGroup());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsNumber());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsString());
   }
 }

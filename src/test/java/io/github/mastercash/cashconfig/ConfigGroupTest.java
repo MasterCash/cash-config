@@ -51,7 +51,7 @@ public class ConfigGroupTest {
 
   @Test
   public void toJSONEmpty() {
-    var test = new ConfigGroup("test", null);
+    var test = new ConfigGroup("test");
     var json = new JsonObject();
     test.toJson(json);
     Assert.assertEquals("Empty Group to JSON is Empty", true, json.get("test").getAsJsonObject().size() == 0);
@@ -71,7 +71,7 @@ public class ConfigGroupTest {
 
   @Test
   public void fromJSONEmpty() {
-    var test = new ConfigGroup("test", null);
+    var test = new ConfigGroup("test");
     var json = new JsonObject();
     test.fromJson(json);
     Assert.assertEquals("Empty Group from JSON is Empty", true, test.size() == 0);
@@ -79,7 +79,7 @@ public class ConfigGroupTest {
 
   @Test
   public void fromJSONFilled() {
-    var test = new ConfigGroup("test", null);
+    var test = new ConfigGroup("test");
     var json = new JsonObject();
     json.addProperty("str", "test");
     var sub = new JsonObject();
@@ -118,4 +118,23 @@ public class ConfigGroupTest {
     Assert.assertEquals(num, test.GetItem("test"));
   }
 
+  @Test
+  public void isItem() {
+    var test = new ConfigGroup();
+    Assert.assertEquals(false, test.IsBoolean());
+    Assert.assertEquals(true, test.IsGroup());
+    Assert.assertEquals(false, test.IsList());
+    Assert.assertEquals(false, test.IsNumber());
+    Assert.assertEquals(false, test.IsString());
+  }
+
+  @Test
+  public void asItem() {
+    var test = new ConfigGroup();
+    Assert.assertEquals(test, test.AsGroup());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsBoolean());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsList());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsNumber());
+    Assert.assertThrows(IllegalStateException.class, () -> test.AsString());
+  }
 }
