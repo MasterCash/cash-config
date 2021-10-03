@@ -45,6 +45,14 @@ public final class ConfigBoolean extends BaseConfigItem<Boolean> {
   }
 
   /**
+   * Creates a new Boolean item with given key.
+   * @param key The key to be used if put in a group.
+   */
+  public ConfigBoolean(@NotNull String key) {
+    this(key, false);
+  }
+
+  /**
    * Creates a new Boolean item with given key and value
    * @param key The key to be used if put in a group.
    * @param value the default value contained in this item.

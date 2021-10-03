@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import io.github.mastercash.cashconfig.Items.BaseConfigItem;
 import io.github.mastercash.cashconfig.Items.ConfigGroup;
 import io.github.mastercash.cashconfig.Items.BaseConfigItem.Type;
-
+import static com.google.common.collect.ImmutableList.of;
 /**
  * Configuration Object. Use this to load and save configuration data from a file.
  */
@@ -55,6 +55,10 @@ public final class Config {
   private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
   private final Map<String, BaseConfigItem<?>> items;
   private final File file;
+
+  public Config(BaseConfigItem<?> item, @NotNull File file) {
+    this(of(item), file);
+  }
 
   /**
    * Create new Configuration Instance
