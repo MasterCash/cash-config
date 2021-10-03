@@ -35,5 +35,5 @@ jobs:
       - name: Push Changes
         uses: ad-m/github-push-action@master
         with:
-          branch: "HEAD:refs/heads/javadocs"
+          branch: "refs/heads/javadocs"
           force: true
