@@ -201,4 +201,14 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
     return Collections.unmodifiableList(new ArrayList<>(_items.values()));
   }
 
+
+  @Override
+  public void setValue(@NotNull List<BaseConfigItem<?>> value) {
+    Objects.requireNonNull(value);
+    _items = new HashMap<>();
+    for(var item : value) {
+      SetItem(item);
+    }
+    return;
+  }
 }
