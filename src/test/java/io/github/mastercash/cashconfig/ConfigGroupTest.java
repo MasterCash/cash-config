@@ -51,7 +51,7 @@ public class ConfigGroupTest {
 
   @Test
   public void toJSONEmpty() {
-    var test = new ConfigGroup("test", null);
+    var test = new ConfigGroup("test");
     var json = new JsonObject();
     test.toJson(json);
     Assert.assertEquals("Empty Group to JSON is Empty", true, json.get("test").getAsJsonObject().size() == 0);
@@ -71,7 +71,7 @@ public class ConfigGroupTest {
 
   @Test
   public void fromJSONEmpty() {
-    var test = new ConfigGroup("test", null);
+    var test = new ConfigGroup("test");
     var json = new JsonObject();
     test.fromJson(json);
     Assert.assertEquals("Empty Group from JSON is Empty", true, test.size() == 0);
@@ -79,7 +79,7 @@ public class ConfigGroupTest {
 
   @Test
   public void fromJSONFilled() {
-    var test = new ConfigGroup("test", null);
+    var test = new ConfigGroup("test");
     var json = new JsonObject();
     json.addProperty("str", "test");
     var sub = new JsonObject();

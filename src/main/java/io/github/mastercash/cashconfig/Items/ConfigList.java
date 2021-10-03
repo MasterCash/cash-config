@@ -37,6 +37,7 @@ import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 
 import io.github.mastercash.cashconfig.Constants;
+import static com.google.common.collect.ImmutableList.of;
 
 /**
  * Configuration item for a json array for {@link BaseConfigItem}
@@ -51,7 +52,26 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * The first item added (via {@link #AddItem(BaseConfigItem)}) will set {@link Type} of the items stored in the array.
    */
   public ConfigList() {
-    this("", null, null);
+    this("", new ArrayList<>(), null);
+  }
+
+  /**
+   * Creates an empty Array item with no key.
+   * The first item added (via {@link #AddItem(BaseConfigItem)}) will set {@link Type} of the items stored in the array.
+   * @param key The key to be used if put in a group
+   */
+  public ConfigList(String key) {
+    this(key, null, null);
+  }
+
+  /**
+   * Creates an Array item with given key and item
+   * Subtype is inferred from given item
+   * @param key The key to be used if put in a group.
+   * @param item item to add to this array by default.
+   */
+  public ConfigList(String key, @NotNull BaseConfigItem<?> item) {
+    this(key, of(Objects.requireNonNull(item)), item.type);
   }
 
   /**
