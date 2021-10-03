@@ -69,7 +69,7 @@ public class ConfigListTest {
 
   @Test
   public void toJSONEmpty() {
-    var test = new ConfigList("test", null, null);
+    var test = new ConfigList("test");
     var json = new JsonObject();
     test.toJson(json);
     Assert.assertEquals("List to JSON empty", true, json.get("test").getAsJsonArray().size() == 0);
