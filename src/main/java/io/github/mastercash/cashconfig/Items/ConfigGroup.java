@@ -153,41 +153,37 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
   public void fromJson(@NotNull JsonElement element) {
     Objects.requireNonNull(element);
     var obj = element.getAsJsonObject();
-    var empty = _items.isEmpty();
     for(var entry : obj.entrySet()) {
-      if(empty) {
-        if(entry.getValue().isJsonArray()) {
-          var item = new ConfigList(entry.getKey(), null, null);
-          item.fromJson(entry.getValue());
+      if(_items.containsKey(entry.getKey())) {
+        var item = _items.get(entry.getKey());
+        item.fromJson(entry.getValue());
+      }
+      else if(entry.getValue().isJsonArray()) {
+        var item = new ConfigList(entry.getKey(), null, null);
+        item.fromJson(entry.getValue());
+        _items.put(entry.getKey(), item);
+      }
+      else if(entry.getValue().isJsonObject()) {
+        var item = new ConfigGroup(entry.getKey(), null);
+        item.fromJson(entry.getValue());
+        _items.put(entry.getKey(), item);
+      }
+      else if(entry.getValue().isJsonPrimitive()) {
+        var prim = entry.getValue().getAsJsonPrimitive();
+        if(prim.isString()) {
+          var item = new ConfigString(entry.getKey(), null);
+          item.fromJson(prim);
           _items.put(entry.getKey(), item);
         }
-        else if(entry.getValue().isJsonObject()) {
-          var item = new ConfigGroup(entry.getKey(), null);
-          item.fromJson(entry.getValue());
+        else if(prim.isNumber()) {
+          var item = new ConfigNumber(entry.getKey(), null);
+          item.fromJson(prim);
           _items.put(entry.getKey(), item);
         }
-        else if(entry.getValue().isJsonPrimitive()) {
-          var prim = entry.getValue().getAsJsonPrimitive();
-          if(prim.isString()) {
-            var item = new ConfigString(entry.getKey(), null);
-            item.fromJson(prim);
-            _items.put(entry.getKey(), item);
-          }
-          else if(prim.isNumber()) {
-            var item = new ConfigNumber(entry.getKey(), null);
-            item.fromJson(prim);
-            _items.put(entry.getKey(), item);
-          }
-          else if(prim.isBoolean()) {
-            var item = new ConfigBoolean(entry.getKey(), null);
-            item.fromJson(prim);
-            _items.put(entry.getKey(), item);
-          }
-        }
-      } else {
-        if(_items.containsKey(entry.getKey())) {
-          var item = _items.get(entry.getKey());
-          item.fromJson(entry.getValue());
+        else if(prim.isBoolean()) {
+          var item = new ConfigBoolean(entry.getKey(), null);
+          item.fromJson(prim);
+          _items.put(entry.getKey(), item);
         }
       }
     }

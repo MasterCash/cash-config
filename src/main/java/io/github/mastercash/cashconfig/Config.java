@@ -27,12 +27,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -53,7 +50,7 @@ import static com.google.common.collect.ImmutableList.of;
  */
 public final class Config {
   private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-  private final Map<String, BaseConfigItem<?>> items;
+  private final ConfigGroup items;
   private final File file;
 
   public Config(BaseConfigItem<?> item, @NotNull File file) {
@@ -65,14 +62,9 @@ public final class Config {
    * @param items List of items to default in if no values
    * @param file  file to read/save to.
    */ 
-  public Config(List<BaseConfigItem<?>> items,@NotNull File file) {
+  public Config(List<BaseConfigItem<?>> items, @NotNull File file) {
     Objects.requireNonNull(file);
-    this.items = new HashMap<>();
-    if(items != null) {
-      for(var item : items) {
-        this.items.put(item.getKey(), item);
-      }
-    }
+    this.items = new ConfigGroup("root", items);
     this.file = file;
   }
 
@@ -83,7 +75,7 @@ public final class Config {
    * @return list of {@link BaseConfigItem}'s containing configuration data.
    */
   public List<BaseConfigItem<?>> getItems() {
-    return new ArrayList<>(items.values());
+    return items.getValue();
   }
 
   /**
@@ -91,12 +83,10 @@ public final class Config {
    */
   public void saveFile() {
     JsonObject object = new JsonObject();
-    for(var item : items.values()) {
-      item.toJson(object);
-    }
+    items.toJson(object);
 
     try (var stream = new FileOutputStream(file)) {
-      stream.write(GSON.toJson(object).getBytes());
+      stream.write(GSON.toJson(object.get("root")).getBytes());
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -124,21 +114,7 @@ public final class Config {
       stream.read(bytes);
       String file = new String(bytes);
       JsonObject parsed = new JsonParser().parse(file).getAsJsonObject();
-      for(var entry : parsed.entrySet()) {
-        if(items.containsKey(entry.getKey())) {
-          items.get(entry.getKey()).fromJson(entry.getValue());
-        } else {
-          var type = BaseConfigItem.getType(entry.getValue());
-          if(type != null) {
-            var item = BaseConfigItem.getInstance(type, entry.getKey());
-            item.fromJson(entry.getValue());
-            items.put(item.getKey(), item);
-          }
-          else {
-            Constants.LOGGER.log(Level.ERROR, "No type for JSON key: " + entry.getKey() + " - " + entry.getValue().toString());
-          }
-        }
-      }
+      items.fromJson(parsed);
     } catch (FileNotFoundException e) {
       saveFile();
     } catch (Exception e) {
@@ -148,7 +124,7 @@ public final class Config {
 
   /**
    * Retrieves an Item from the configuration structure.
-   * @param path Path to value in the form of 'obj1.obj2.obj3'
+   * @param path path to item in format: group.item
    * @param type Type of the value expected to find at the end of the path.
    * @return The Configuration item found at the end of the path. If item is not found, null is returned.
    * @throws IllegalArgumentException thrown if {@link BaseConfigItem.Type} doesn't match object's type
@@ -156,23 +132,73 @@ public final class Config {
   public BaseConfigItem<?> getItem(@NotNull String path, @NotNull Type type) throws IllegalArgumentException {
     Objects.requireNonNull(path);
     Objects.requireNonNull(type);
-    var splitPath = path.split("\\.");
-    var selectedItem = items.get(splitPath[0]);
-    var paths = new LinkedList<>(Arrays.asList(splitPath));
+    var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
     try {
-      while(selectedItem instanceof ConfigGroup) {
-        paths.removeFirst();
-        selectedItem = ((ConfigGroup) selectedItem).GetItem(paths.getFirst());
-        if(selectedItem == null) throw new NoSuchElementException();
+      var parent = getParent(items, paths);
+      var selectedItem = parent.GetItem(paths.getLast());
+      if(!selectedItem.getType().equals(type)) {
+        throw new IllegalArgumentException("Incorrect type " + type + " for " + path + ". Correct type: " + selectedItem.getType());
       }
+      return selectedItem;
     } catch(NoSuchElementException e) {
       Constants.LOGGER.log(Level.ERROR, "Item " + paths.getFirst() + " in path " + path + " was not found");
       return null;
     }
-    if(!selectedItem.getType().equals(type)) {
-      throw new IllegalArgumentException("Incorrect type " + type + " for " + path + ". Correct type: " + selectedItem.getType());
-    }
 
-    return selectedItem;
   }
+
+  /**
+   * Removes an item from the Config File
+   * @param path path to item in format: group.item
+   */
+  public void RemoveItem(@NotNull String path) {
+    Objects.requireNonNull(path);
+    var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
+    try {
+      var parent = getParent(items, paths);
+      parent.RemoveItem(paths.getLast());
+    } catch(NoSuchElementException e) {
+      Constants.LOGGER.log(Level.ERROR, "Item " + paths.getFirst() + " in path " + path + " was not found");
+    }
+  }
+
+  /**
+   * Checks if Config has item at given path.
+   * @param path path to item in format: group.item
+   * @return true if item found, false otherwise
+   */
+  public boolean HasItem(@NotNull String path) {
+    Objects.requireNonNull(path);
+    var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
+    try {
+      getParent(items, paths);
+      return true;
+    }catch(NoSuchElementException e) {
+      return false;
+    }
+  }
+
+  /**
+   * gets the parent node from a given path.
+   * @param parent parent node
+   * @param paths list of path nodes
+   * @return the parent ConfigGroup
+   * @throws NoSuchElementException item not found
+   */
+  private static ConfigGroup getParent(@NotNull ConfigGroup parent, LinkedList<String> paths) throws NoSuchElementException {
+    if(paths.size() == 1) {
+      if(!parent.HasItem(paths.getFirst())) throw new NoSuchElementException();
+      return parent;
+    }
+    if(paths.size() > 1) {
+      var key = paths.getFirst();
+      if(!parent.HasItem(key)) throw new NoSuchElementException();
+      var item = parent.GetItem(key);
+      if(!item.IsGroup()) throw new NoSuchElementException();
+      paths.removeFirst();
+      return getParent(parent.GetItem(key).AsGroup(), paths);
+    }
+    throw new NoSuchElementException();
+  }
+
 }
