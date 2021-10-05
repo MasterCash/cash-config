@@ -13,7 +13,7 @@ import static com.google.common.collect.ImmutableList.of;
 
 public class ConfigTest {
   private static File file = new File("test.json");
-  private ConfigString str(String key) {return new ConfigString(key, "test"); }
+  private static ConfigString str(String key) {return new ConfigString(key, "test"); }
 
   @AfterClass
   public static void Cleanup() {
