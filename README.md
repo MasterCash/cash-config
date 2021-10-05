@@ -213,5 +213,9 @@ config.hasFile();
 config.readFile();
 // Will get the item at a given path. A path is in the form (<key>.<key>.<key>). 
 // Type is the type expected to be at the end of the path. throws IllegalArgumentException if wrong type.
-config.getItem(<path>, <type>);
+config.GetItem(<path>, <type>);
+// Checks to see if given path resolves to an item.
+config.HasItem(<path>);
+// Removes the item at a given path. 
+config.RemoveItem(<path>);
 ```
