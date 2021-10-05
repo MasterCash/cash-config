@@ -2,6 +2,7 @@ package io.github.mastercash.cashconfig;
 
 import java.io.File;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,8 +12,14 @@ import io.github.mastercash.cashconfig.Items.BaseConfigItem.Type;
 import static com.google.common.collect.ImmutableList.of;
 
 public class ConfigTest {
-  private File file = new File("test.json");
-  private ConfigString str(String key) {return new ConfigString(key, "test"); }
+  private static File file = new File("test.json");
+  private static ConfigString str(String key) {return new ConfigString(key, "test"); }
+
+  @AfterClass
+  public static void Cleanup() {
+    file.deleteOnExit();
+  }
+
   @Test
   public void CreateConfig() {
     new Config(str("test"), file);
@@ -67,10 +74,10 @@ public class ConfigTest {
   @Test
   public void removeItem() {
     var test = new Config(of(str("test"), new ConfigGroup("root", of(str("test")))), file);
-    test.RemoveItem("test");
-    test.RemoveItem("root.test");
-    Assert.assertEquals(false, test.HasItem("test"));
-    Assert.assertEquals(false, test.HasItem("root.test"));
-    Assert.assertEquals(true, test.HasItem("root"));
+    test.removeItem("test");
+    test.removeItem("root.test");
+    Assert.assertEquals(false, test.hasItem("test"));
+    Assert.assertEquals(false, test.hasItem("root.test"));
+    Assert.assertEquals(true, test.hasItem("root"));
   }
 }

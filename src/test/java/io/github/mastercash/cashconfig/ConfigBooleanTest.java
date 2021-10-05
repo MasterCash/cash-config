@@ -58,21 +58,21 @@ public class ConfigBooleanTest {
   @Test
   public void isItem() {
     var test = new ConfigBoolean();
-    Assert.assertEquals(true, test.IsBoolean());
-    Assert.assertEquals(false, test.IsGroup());
-    Assert.assertEquals(false, test.IsList());
-    Assert.assertEquals(false, test.IsNumber());
-    Assert.assertEquals(false, test.IsString());
+    Assert.assertEquals(true, test.isBoolean());
+    Assert.assertEquals(false, test.isGroup());
+    Assert.assertEquals(false, test.isList());
+    Assert.assertEquals(false, test.isNumber());
+    Assert.assertEquals(false, test.isString());
   }
 
   @Test
   public void asItem() {
     var test = new ConfigBoolean();
-    Assert.assertEquals(test, test.AsBoolean());
-    Assert.assertThrows(IllegalStateException.class, () -> test.AsGroup());
-    Assert.assertThrows(IllegalStateException.class, () -> test.AsList());
-    Assert.assertThrows(IllegalStateException.class, () -> test.AsNumber());
-    Assert.assertThrows(IllegalStateException.class, () -> test.AsString());
+    Assert.assertEquals(test, test.asBoolean());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asGroup());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asList());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asNumber());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asString());
   }
   
 }
