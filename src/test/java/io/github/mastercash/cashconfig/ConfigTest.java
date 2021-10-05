@@ -2,7 +2,6 @@ package io.github.mastercash.cashconfig;
 
 import java.io.File;
 
-import org.apache.commons.compress.archivers.dump.DumpArchiveEntry.TYPE;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,7 +15,7 @@ public class ConfigTest {
   private ConfigString str(String key) {return new ConfigString(key, "test"); }
   @Test
   public void CreateConfig() {
-    var test = new Config(str("test"), file);
+    new Config(str("test"), file);
   }
   
   @Test
