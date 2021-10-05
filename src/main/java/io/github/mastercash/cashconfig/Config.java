@@ -45,6 +45,7 @@ import io.github.mastercash.cashconfig.Items.BaseConfigItem;
 import io.github.mastercash.cashconfig.Items.ConfigGroup;
 import io.github.mastercash.cashconfig.Items.BaseConfigItem.Type;
 import static com.google.common.collect.ImmutableList.of;
+
 /**
  * Configuration Object. Use this to load and save configuration data from a file.
  */
@@ -71,7 +72,7 @@ public final class Config {
   /**
    * Get list of Configuration items in this configuration.
    * If {@link #readFile()} hasn't been called, this will contain the defaults given.
-   * @see #getItem(String, Type) for retrieving an individual item
+   * @see #GetItem(String, Type) for retrieving an individual item
    * @return list of {@link BaseConfigItem}'s containing configuration data.
    */
   public List<BaseConfigItem<?>> getItems() {
@@ -106,7 +107,7 @@ public final class Config {
   }
 
   /**
-   * Reads configuration from file. Values can be retrieved via {@link #getItem(String, Type)} or {@link #getItems()}
+   * Reads configuration from file. Values can be retrieved via {@link #GetItem(String, Type)} or {@link #getItems()}
    */
   public void readFile() {
     try (FileInputStream stream = new FileInputStream(file)) {
@@ -129,7 +130,7 @@ public final class Config {
    * @return The Configuration item found at the end of the path. If item is not found, null is returned.
    * @throws IllegalArgumentException thrown if {@link BaseConfigItem.Type} doesn't match object's type
    */
-  public BaseConfigItem<?> getItem(@NotNull String path, @NotNull Type type) throws IllegalArgumentException {
+  public BaseConfigItem<?> GetItem(@NotNull String path, @NotNull Type type) throws IllegalArgumentException {
     Objects.requireNonNull(path);
     Objects.requireNonNull(type);
     var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
@@ -175,6 +176,22 @@ public final class Config {
       return true;
     }catch(NoSuchElementException e) {
       return false;
+    }
+  }
+
+  /**
+   * Get the type of the item at the given path.
+   * @param path path to item in the format: group.item
+   * @return Item Type if found, null otherwise.
+   */
+  public Type GetType(@NotNull String path) {
+    Objects.requireNonNull(path);
+    var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
+    try {
+      var parent = getParent(items, paths);
+      return parent.GetItem(paths.getLast()).getType(); 
+    } catch (NoSuchElementException e) {
+      return null;
     }
   }
 
