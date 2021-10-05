@@ -72,7 +72,7 @@ public final class Config {
   /**
    * Get list of Configuration items in this configuration.
    * If {@link #readFile()} hasn't been called, this will contain the defaults given.
-   * @see #GetItem(String, Type) for retrieving an individual item
+   * @see #getItem(String, Type) for retrieving an individual item
    * @return list of {@link BaseConfigItem}'s containing configuration data.
    */
   public List<BaseConfigItem<?>> getItems() {
@@ -107,7 +107,7 @@ public final class Config {
   }
 
   /**
-   * Reads configuration from file. Values can be retrieved via {@link #GetItem(String, Type)} or {@link #getItems()}
+   * Reads configuration from file. Values can be retrieved via {@link #getItem(String, Type)} or {@link #getItems()}
    */
   public void readFile() {
     try (FileInputStream stream = new FileInputStream(file)) {
@@ -130,13 +130,13 @@ public final class Config {
    * @return The Configuration item found at the end of the path. If item is not found, null is returned.
    * @throws IllegalArgumentException thrown if {@link BaseConfigItem.Type} doesn't match object's type
    */
-  public BaseConfigItem<?> GetItem(@NotNull String path, @NotNull Type type) throws IllegalArgumentException {
+  public BaseConfigItem<?> getItem(@NotNull String path, @NotNull Type type) throws IllegalArgumentException {
     Objects.requireNonNull(path);
     Objects.requireNonNull(type);
     var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
     try {
       var parent = getParent(items, paths);
-      var selectedItem = parent.GetItem(paths.getLast());
+      var selectedItem = parent.getItem(paths.getLast());
       if(!selectedItem.getType().equals(type)) {
         throw new IllegalArgumentException("Incorrect type " + type + " for " + path + ". Correct type: " + selectedItem.getType());
       }
@@ -152,12 +152,12 @@ public final class Config {
    * Removes an item from the Config File
    * @param path path to item in format: group.item
    */
-  public void RemoveItem(@NotNull String path) {
+  public void removeItem(@NotNull String path) {
     Objects.requireNonNull(path);
     var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
     try {
       var parent = getParent(items, paths);
-      parent.RemoveItem(paths.getLast());
+      parent.removeItem(paths.getLast());
     } catch(NoSuchElementException e) {
       Constants.LOGGER.log(Level.ERROR, "Item " + paths.getFirst() + " in path " + path + " was not found");
     }
@@ -168,7 +168,7 @@ public final class Config {
    * @param path path to item in format: group.item
    * @return true if item found, false otherwise
    */
-  public boolean HasItem(@NotNull String path) {
+  public boolean hasItem(@NotNull String path) {
     Objects.requireNonNull(path);
     var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
     try {
@@ -184,12 +184,12 @@ public final class Config {
    * @param path path to item in the format: group.item
    * @return Item Type if found, null otherwise.
    */
-  public Type GetType(@NotNull String path) {
+  public Type getType(@NotNull String path) {
     Objects.requireNonNull(path);
     var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
     try {
       var parent = getParent(items, paths);
-      return parent.GetItem(paths.getLast()).getType(); 
+      return parent.getItem(paths.getLast()).getType(); 
     } catch (NoSuchElementException e) {
       return null;
     }
@@ -204,18 +204,17 @@ public final class Config {
    */
   private static ConfigGroup getParent(@NotNull ConfigGroup parent, LinkedList<String> paths) throws NoSuchElementException {
     if(paths.size() == 1) {
-      if(!parent.HasItem(paths.getFirst())) throw new NoSuchElementException();
+      if(!parent.hasItem(paths.getFirst())) throw new NoSuchElementException();
       return parent;
     }
     if(paths.size() > 1) {
       var key = paths.getFirst();
-      if(!parent.HasItem(key)) throw new NoSuchElementException();
-      var item = parent.GetItem(key);
-      if(!item.IsGroup()) throw new NoSuchElementException();
+      if(!parent.hasItem(key)) throw new NoSuchElementException();
+      var item = parent.getItem(key);
+      if(!item.isGroup()) throw new NoSuchElementException();
       paths.removeFirst();
-      return getParent(parent.GetItem(key).AsGroup(), paths);
+      return getParent(parent.getItem(key).asGroup(), paths);
     }
     throw new NoSuchElementException();
   }
-
 }

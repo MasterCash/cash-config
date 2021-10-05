@@ -28,16 +28,16 @@ public class ConfigTest {
   @Test
   public void GetItem() {
     var test = new Config(str("test"), file);
-    Assert.assertEquals("test", test.GetItem("test", Type.STRING).getValue());
+    Assert.assertEquals("test", test.getItem("test", Type.STRING).getValue());
   }
 
   @Test
   public void GetGroup() {
     var grp = new ConfigGroup("test", of(str("test"), str("other")));
     var test = new Config(grp, file);
-    Assert.assertNotNull(test.GetItem("test", Type.GROUP));
-    Assert.assertEquals("test", test.GetItem("test.test", Type.STRING).getValue());
-    Assert.assertEquals("test", test.GetItem("test.other", Type.STRING).getValue());
+    Assert.assertNotNull(test.getItem("test", Type.GROUP));
+    Assert.assertEquals("test", test.getItem("test.test", Type.STRING).getValue());
+    Assert.assertEquals("test", test.getItem("test.other", Type.STRING).getValue());
   }
 
   @Test
@@ -54,30 +54,30 @@ public class ConfigTest {
     old.saveFile(); 
     var test = new Config(new ConfigString("test", "bob"), file);
     test.readFile();
-    Assert.assertEquals("test", test.GetItem("test", Type.STRING).getValue());
-    Assert.assertEquals("test", test.GetItem("other", Type.STRING).getValue());
+    Assert.assertEquals("test", test.getItem("test", Type.STRING).getValue());
+    Assert.assertEquals("test", test.getItem("other", Type.STRING).getValue());
   }
 
   @Test
   public void getMissingItem() {
     var test = new Config(new ConfigGroup("test"), file);
-    Assert.assertNull(test.GetItem("bob", Type.GROUP));
-    Assert.assertNull(test.GetItem("test.bob", Type.GROUP));
+    Assert.assertNull(test.getItem("bob", Type.GROUP));
+    Assert.assertNull(test.getItem("test.bob", Type.GROUP));
   }
 
   @Test
   public void getWrongType() {
     var test = new Config(str("test"), file);
-    Assert.assertThrows(IllegalArgumentException.class, () -> test.GetItem("test", Type.GROUP));
+    Assert.assertThrows(IllegalArgumentException.class, () -> test.getItem("test", Type.GROUP));
   }
 
   @Test
   public void removeItem() {
     var test = new Config(of(str("test"), new ConfigGroup("root", of(str("test")))), file);
-    test.RemoveItem("test");
-    test.RemoveItem("root.test");
-    Assert.assertEquals(false, test.HasItem("test"));
-    Assert.assertEquals(false, test.HasItem("root.test"));
-    Assert.assertEquals(true, test.HasItem("root"));
+    test.removeItem("test");
+    test.removeItem("root.test");
+    Assert.assertEquals(false, test.hasItem("test"));
+    Assert.assertEquals(false, test.hasItem("root.test"));
+    Assert.assertEquals(true, test.hasItem("root"));
   }
 }

@@ -45,8 +45,8 @@ public class ConfigGroupTest {
   @Test
   public void createGroupAddValues() {
     var test = new ConfigGroup();
-    test.AddItem(new ConfigBoolean("test", true));
-    Assert.assertEquals("Added value", true, test.GetItem("test").getValue());
+    test.addItem(new ConfigBoolean("test", true));
+    Assert.assertEquals("Added value", true, test.getItem("test").getValue());
   }
 
   @Test
@@ -87,15 +87,15 @@ public class ConfigGroupTest {
     json.add("obj", sub);
     test.fromJson(json);
     Assert.assertEquals("Filled Group from JSON has items", true, test.size() > 0);
-    Assert.assertEquals("Filled Group from JSON correct value", "test", (String) test.GetItem("str").getValue());
-    Assert.assertEquals("Filled Group from JSON nested Object", true, (Boolean) ((ConfigGroup) test.GetItem("obj")).GetItem("test").getValue());
+    Assert.assertEquals("Filled Group from JSON correct value", "test", (String) test.getItem("str").getValue());
+    Assert.assertEquals("Filled Group from JSON nested Object", true, (Boolean) ((ConfigGroup) test.getItem("obj")).getItem("test").getValue());
   }
 
   @Test
   public void removeItem() {
     var test = new ConfigGroup();
-    test.AddItem(new ConfigString("test", "test"));
-    test.RemoveItem("test");
+    test.addItem(new ConfigString("test", "test"));
+    test.removeItem("test");
     Assert.assertEquals("Removed item", 0, test.size());
   }
 
@@ -103,10 +103,10 @@ public class ConfigGroupTest {
   public void addItem() {
     var test = new ConfigGroup();
     var str = new ConfigString("test", "test");
-    test.AddItem(str);
-    Assert.assertEquals(true, test.HasItem("test"));
+    test.addItem(str);
+    Assert.assertEquals(true, test.hasItem("test"));
     Assert.assertEquals(1, test.size());
-    Assert.assertEquals(str, test.GetItem("test"));
+    Assert.assertEquals(str, test.getItem("test"));
   }
 
   @Test
@@ -114,27 +114,27 @@ public class ConfigGroupTest {
     var str = new ConfigString("test", "test");
     var num = new ConfigNumber("test", 0);
     var test = new ConfigGroup("", of(str));
-    test.SetItem(num);
-    Assert.assertEquals(num, test.GetItem("test"));
+    test.setItem(num);
+    Assert.assertEquals(num, test.getItem("test"));
   }
 
   @Test
   public void isItem() {
     var test = new ConfigGroup();
-    Assert.assertEquals(false, test.IsBoolean());
-    Assert.assertEquals(true, test.IsGroup());
-    Assert.assertEquals(false, test.IsList());
-    Assert.assertEquals(false, test.IsNumber());
-    Assert.assertEquals(false, test.IsString());
+    Assert.assertEquals(false, test.isBoolean());
+    Assert.assertEquals(true, test.isGroup());
+    Assert.assertEquals(false, test.isList());
+    Assert.assertEquals(false, test.isNumber());
+    Assert.assertEquals(false, test.isString());
   }
 
   @Test
   public void asItem() {
     var test = new ConfigGroup();
-    Assert.assertEquals(test, test.AsGroup());
-    Assert.assertThrows(IllegalStateException.class, () -> test.AsBoolean());
-    Assert.assertThrows(IllegalStateException.class, () -> test.AsList());
-    Assert.assertThrows(IllegalStateException.class, () -> test.AsNumber());
-    Assert.assertThrows(IllegalStateException.class, () -> test.AsString());
+    Assert.assertEquals(test, test.asGroup());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asBoolean());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asList());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asNumber());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asString());
   }
 }
