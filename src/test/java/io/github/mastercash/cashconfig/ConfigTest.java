@@ -69,6 +69,9 @@ public class ConfigTest {
   public void removeItem() {
     var test = new Config(of(str("test"), new ConfigGroup("root", of(str("test")))), file);
     test.RemoveItem("test");
-    Assert.assertEquals(null, test.get);
+    test.RemoveItem("root.test");
+    Assert.assertEquals(false, test.HasItem("test"));
+    Assert.assertEquals(false, test.HasItem("root.test"));
+    Assert.assertEquals(true, test.HasItem("root"));
   }
 }
