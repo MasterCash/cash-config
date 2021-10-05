@@ -50,7 +50,7 @@ public class ConfigListTest {
   @Test
   public void createListAdd() {
     var test = new ConfigList();
-    test.AddItem(new ConfigBoolean());
+    test.addItem(new ConfigBoolean());
     Assert.assertEquals("add item", true, test.getValue().size() > 0);
   }
 
@@ -58,7 +58,7 @@ public class ConfigListTest {
   public void invalidTypes() {
     Assert.assertThrows("adding invalid type constructor", InvalidParameterException.class,() -> new ConfigList("test", of(new ConfigBoolean(), new ConfigString()),Type.BOOLEAN)); 
     var test = new ConfigList("test",null,Type.BOOLEAN);
-    Assert.assertThrows("adding invalid type to list", InvalidParameterException.class,() -> test.AddItem(new ConfigString()));
+    Assert.assertThrows("adding invalid type to list", InvalidParameterException.class,() -> test.addItem(new ConfigString()));
   }
 
   @Test
@@ -142,14 +142,14 @@ public class ConfigListTest {
     json.add(obj);
     var test = new ConfigList();
     test.fromJson(json);
-    Assert.assertEquals("List from JSON Group with List", 3, ((ConfigList)((ConfigGroup) test.getValue().get(0)).GetItem("list")).size());
+    Assert.assertEquals("List from JSON Group with List", 3, ((ConfigList)((ConfigGroup) test.getValue().get(0)).getItem("list")).size());
   }
 
   @Test
   public void addItem() {
     var test = new ConfigList();
     var item = new ConfigString("", "Test");
-    test.AddItem(item);
+    test.addItem(item);
     Assert.assertEquals(1, test.size());
     Assert.assertEquals(item, test.getValue().get(0));
   }
@@ -159,7 +159,7 @@ public class ConfigListTest {
     var item1 = new ConfigString();
     var item2 = new ConfigString();
     var test = new ConfigList("", of(item1), Type.STRING);
-    test.AddItem(item2);
+    test.addItem(item2);
     Assert.assertEquals(item1, test.GetItem(0));
     Assert.assertEquals(item2, test.GetItem(1));
   }
@@ -169,30 +169,30 @@ public class ConfigListTest {
     var item1 = new ConfigString();
     var item2 = new ConfigString();
     var test = new ConfigList("", of(item1), Type.STRING);
-    test.AddItem(item2);
-    Assert.assertEquals(item1, test.RemoveItem(0));
+    test.addItem(item2);
+    Assert.assertEquals(item1, test.removeItem(0));
     Assert.assertEquals(1, test.size());
-    Assert.assertEquals(item2, test.RemoveItem(0));
+    Assert.assertEquals(item2, test.removeItem(0));
     Assert.assertEquals(0, test.size());
   }
 
   @Test
   public void isItem() {
     var test = new ConfigList();
-    Assert.assertEquals(false, test.IsBoolean());
-    Assert.assertEquals(false, test.IsGroup());
-    Assert.assertEquals(true, test.IsList());
-    Assert.assertEquals(false, test.IsNumber());
-    Assert.assertEquals(false, test.IsString());
+    Assert.assertEquals(false, test.isBoolean());
+    Assert.assertEquals(false, test.isGroup());
+    Assert.assertEquals(true, test.isList());
+    Assert.assertEquals(false, test.isNumber());
+    Assert.assertEquals(false, test.isString());
   }
 
   @Test
   public void asItem() {
     var test = new ConfigList();
-    Assert.assertEquals(test, test.AsList());
-    Assert.assertThrows(IllegalStateException.class, () -> test.AsBoolean());
-    Assert.assertThrows(IllegalStateException.class, () -> test.AsGroup());
-    Assert.assertThrows(IllegalStateException.class, () -> test.AsNumber());
-    Assert.assertThrows(IllegalStateException.class, () -> test.AsString());
+    Assert.assertEquals(test, test.asList());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asBoolean());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asGroup());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asNumber());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asString());
   }
 }

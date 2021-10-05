@@ -49,7 +49,7 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
   /**
    * Creates an empty Array item with no key.
    * Should not be used if adding this item to {@link ConfigGroup}
-   * The first item added (via {@link #AddItem(BaseConfigItem)}) will set {@link Type} of the items stored in the array.
+   * The first item added (via {@link #addItem(BaseConfigItem)}) will set {@link Type} of the items stored in the array.
    */
   public ConfigList() {
     this("", new ArrayList<>(), null);
@@ -57,7 +57,7 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
 
   /**
    * Creates an empty Array item with no key.
-   * The first item added (via {@link #AddItem(BaseConfigItem)}) will set {@link Type} of the items stored in the array.
+   * The first item added (via {@link #addItem(BaseConfigItem)}) will set {@link Type} of the items stored in the array.
    * @param key The key to be used if put in a group
    */
   public ConfigList(String key) {
@@ -78,7 +78,7 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * Creates an Array item with given key and items
    * null is a valid parameter for items and subType.
    * If items is null at creation, a empty list will be used instead.
-   * If subType is null at creation, the first item added (whether by items parameter or {@link #AddItem(BaseConfigItem)}) will set {@link Type} of the items stored in the array.
+   * If subType is null at creation, the first item added (whether by items parameter or {@link #addItem(BaseConfigItem)}) will set {@link Type} of the items stored in the array.
    * @param key The key to be used if put in a group.
    * @param items List of items to add to this array by default.
    * @param subType The type of this array
@@ -123,7 +123,7 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
 
   /**
    * Gets the type that the this array item is limited to.
-   * if this value is null, the first item added with {@link #AddItem(BaseConfigItem)} will set this type.
+   * if this value is null, the first item added with {@link #addItem(BaseConfigItem)} will set this type.
    * @return {@link Type} of the items.
    */
   public Type getSubType() {
@@ -136,7 +136,7 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param item item to add.
    * @throws InvalidParameterException type of item did not match {@link #getSubType()}
    */
-  public void AddItem(@NotNull BaseConfigItem<?> item) {
+  public void addItem(@NotNull BaseConfigItem<?> item) {
     Objects.requireNonNull(item);
     if(subType == null) {
       subType = item.getType();
@@ -162,7 +162,7 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param index position to remove
    * @return item if removed, null otherwise
    */
-  public BaseConfigItem<?> RemoveItem(int index) {
+  public BaseConfigItem<?> removeItem(int index) {
     Objects.checkIndex(index, value.size());
     return value.remove(index);
   }

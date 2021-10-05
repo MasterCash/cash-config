@@ -45,6 +45,7 @@ import io.github.mastercash.cashconfig.Items.BaseConfigItem;
 import io.github.mastercash.cashconfig.Items.ConfigGroup;
 import io.github.mastercash.cashconfig.Items.BaseConfigItem.Type;
 import static com.google.common.collect.ImmutableList.of;
+
 /**
  * Configuration Object. Use this to load and save configuration data from a file.
  */
@@ -135,7 +136,7 @@ public final class Config {
     var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
     try {
       var parent = getParent(items, paths);
-      var selectedItem = parent.GetItem(paths.getLast());
+      var selectedItem = parent.getItem(paths.getLast());
       if(!selectedItem.getType().equals(type)) {
         throw new IllegalArgumentException("Incorrect type " + type + " for " + path + ". Correct type: " + selectedItem.getType());
       }
@@ -151,12 +152,12 @@ public final class Config {
    * Removes an item from the Config File
    * @param path path to item in format: group.item
    */
-  public void RemoveItem(@NotNull String path) {
+  public void removeItem(@NotNull String path) {
     Objects.requireNonNull(path);
     var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
     try {
       var parent = getParent(items, paths);
-      parent.RemoveItem(paths.getLast());
+      parent.removeItem(paths.getLast());
     } catch(NoSuchElementException e) {
       Constants.LOGGER.log(Level.ERROR, "Item " + paths.getFirst() + " in path " + path + " was not found");
     }
@@ -167,7 +168,7 @@ public final class Config {
    * @param path path to item in format: group.item
    * @return true if item found, false otherwise
    */
-  public boolean HasItem(@NotNull String path) {
+  public boolean hasItem(@NotNull String path) {
     Objects.requireNonNull(path);
     var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
     try {
@@ -175,6 +176,22 @@ public final class Config {
       return true;
     }catch(NoSuchElementException e) {
       return false;
+    }
+  }
+
+  /**
+   * Get the type of the item at the given path.
+   * @param path path to item in the format: group.item
+   * @return Item Type if found, null otherwise.
+   */
+  public Type getType(@NotNull String path) {
+    Objects.requireNonNull(path);
+    var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
+    try {
+      var parent = getParent(items, paths);
+      return parent.getItem(paths.getLast()).getType(); 
+    } catch (NoSuchElementException e) {
+      return null;
     }
   }
 
@@ -187,16 +204,16 @@ public final class Config {
    */
   private static ConfigGroup getParent(@NotNull ConfigGroup parent, LinkedList<String> paths) throws NoSuchElementException {
     if(paths.size() == 1) {
-      if(!parent.HasItem(paths.getFirst())) throw new NoSuchElementException();
+      if(!parent.hasItem(paths.getFirst())) throw new NoSuchElementException();
       return parent;
     }
     if(paths.size() > 1) {
       var key = paths.getFirst();
-      if(!parent.HasItem(key)) throw new NoSuchElementException();
-      var item = parent.GetItem(key);
-      if(!item.IsGroup()) throw new NoSuchElementException();
+      if(!parent.hasItem(key)) throw new NoSuchElementException();
+      var item = parent.getItem(key);
+      if(!item.isGroup()) throw new NoSuchElementException();
       paths.removeFirst();
-      return getParent(parent.GetItem(key).AsGroup(), paths);
+      return getParent(parent.getItem(key).asGroup(), paths);
     }
     throw new NoSuchElementException();
   }

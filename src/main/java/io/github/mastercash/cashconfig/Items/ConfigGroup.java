@@ -92,7 +92,7 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param item item to add.
    * @return true if added false if key for that item already exists.
    */
-  public boolean AddItem(@NotNull BaseConfigItem<?> item) {
+  public boolean addItem(@NotNull BaseConfigItem<?> item) {
     Objects.requireNonNull(item);
     if(_items.containsKey(item.getKey())) return false;
     _items.put(item.getKey(), item);
@@ -104,17 +104,17 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param key key to look for.
    * @return the item if found, otherwise null
    */
-  public BaseConfigItem<?> GetItem(@NotNull String key) {
+  public BaseConfigItem<?> getItem(@NotNull String key) {
     Objects.requireNonNull(key);
     return _items.get(key);
   }
 
-  public BaseConfigItem<?> RemoveItem(@NotNull String key) {
+  public BaseConfigItem<?> removeItem(@NotNull String key) {
     Objects.requireNonNull(key);
     return _items.remove(key);
   }
 
-  public BaseConfigItem<?> SetItem(@NotNull BaseConfigItem<?> item) {
+  public BaseConfigItem<?> setItem(@NotNull BaseConfigItem<?> item) {
     Objects.requireNonNull(item);
     return _items.put(item.getKey(), item);
   }
@@ -124,7 +124,7 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param key key to check
    * @return true if item exits, false otherwise.
    */
-  public boolean HasItem(@NotNull String key) {
+  public boolean hasItem(@NotNull String key) {
     Objects.requireNonNull(key);
     return _items.containsKey(key);
   }
@@ -203,7 +203,7 @@ public final class ConfigGroup extends BaseConfigItem<List<BaseConfigItem<?>>> {
     Objects.requireNonNull(value);
     _items = new HashMap<>();
     for(var item : value) {
-      SetItem(item);
+      setItem(item);
     }
     return;
   }

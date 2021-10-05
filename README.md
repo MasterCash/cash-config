@@ -1,12 +1,61 @@
 # Cash Config
 other config platforms didn't do what I wanted so I am doing it myself
 
+<br>
+
+![Mod Loader fabric](https://img.shields.io/badge/Mod%20Loader-Fabric-green) ![GitHub all releases](https://img.shields.io/github/downloads/mastercash/cash-config/total) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/mastercash/cash-config)
+
+![Supported Versions](https://img.shields.io/badge/Minecraft%20Versions-1.17-informational)
+
 ## Description
 This is a simple Fabric Server side mod to allow saving and loading configuration data to a file.
 
 Shout out to [OroArmor](https://github.com/OroArmor) and their [Oro-Config Mod](https://github.com/OroArmor/Oro-Config) for providing heavy influence for this mod.
 
 ## Usage
+
+<br>
+
+### Adding to Your Project
+To add this package to your project it will require having a [github personal token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token). Your token will need to have `read:packages` permission.
+
+The recommended way is to store your token in an environment variable to be used in your build.gradle:
+```gradle
+repositories {
+	maven {
+		url = "https://maven.pkg.github.com/mastercash/cash-config"
+		credentials {
+			username = System.getenv("GITHUB_ACTOR")
+			password = System.getenv("GITHUB_TOKEN")
+		}
+	}
+}
+
+dependencies {
+  modImplementation "io.github.mastercash.cash-config:${project.config_version}"
+}
+```
+
+here `GITHUB_ACTOR` is your github username and `GITHUB_TOKEN` is your personal token.
+
+Note: if you are using Github Actions to build you will need to add a env variable to your gradle build step:
+```yml
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+
+Example:
+```yml
+- name: build
+  run: ./gradlew build
+  env:
+    GITHUB_TOKEN: $${{ secrets.GITHUB_TOKEN }}
+```
+
+
+<br>
+
 ### Types
 #### `Type`
 ---
@@ -41,19 +90,19 @@ Usage: `getKey()`
 Additionally, the base class has helpful functions for casting and verifying the type of item this is:
 ```java
 // These check if the item is a certain type
-item.IsGroup()
-item.IsList()
-item.IsList(subType)
-item.IsNumber()
-item.IsBoolean()
-item.IsString()
+item.isGroup()
+item.isList()
+item.isList(subType)
+item.isNumber()
+item.isBoolean()
+item.isString()
 
 // These cast item as a certain type, throws IllegalStateException if casted as the wrong type.
-item.AsGroup()
-item.AsList()
-item.AsNumber()
-item.AsBoolean()
-item.AsString()
+item.asGroup()
+item.asList()
+item.asNumber()
+item.asBoolean()
+item.asString()
 ```
 
 <br>
@@ -144,15 +193,15 @@ Additional Methods:
 // gets the number of items in this group
 item.size();
 // add an item to the group, the key of the item needs to be unique to this group
-item.AddItem(<item>);
+item.addItem(<item>);
 // checks to see if a key exists currently in the group
-item.HasItem(<key>);
+item.hasItem(<key>);
 // gets the item with the given key in the group
-item.GetItem(<key>);
+item.getItem(<key>);
 // sets the given item in the group, will overwrite existing value
-item.SetItem(<item>);
+item.setItem(<item>);
 // remove the item at the given key from the group
-item.RemoveItem(<key>);
+item.removeItem(<key>);
 ```
 
 <br>
@@ -183,11 +232,11 @@ Additional Methods:
 // gets the number of items in this list
 item.size();
 // add an item to the list, the key of the item doesn't matter
-item.AddItem(<item>);
+item.addItem(<item>);
 // gets the item at the given index in the list
-item.GetItem(<index>);
+item.getItem(<index>);
 // removes the item at the given index in the list
-item.RemoveItem(<index>);
+item.removeItem(<index>);
 // gets the type of the items in the array (if array empty possibly null)
 item.getSubType();
 ```
@@ -214,4 +263,10 @@ config.readFile();
 // Will get the item at a given path. A path is in the form (<key>.<key>.<key>). 
 // Type is the type expected to be at the end of the path. throws IllegalArgumentException if wrong type.
 config.getItem(<path>, <type>);
+// Checks to see if given path resolves to an item.
+config.hasItem(<path>);
+// Gets the type associated with the item at the given path. if item doesn't exist, null is returned
+config.getType(<path>);
+// Removes the item at a given path. 
+config.removeItem(<path>);
 ```

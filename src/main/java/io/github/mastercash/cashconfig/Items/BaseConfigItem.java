@@ -131,7 +131,7 @@ public abstract class BaseConfigItem<T> {
    * Checks if this item is a group item
    * @return true if group item, false otherwise
    */
-  public boolean IsGroup() {
+  public boolean isGroup() {
     return type.equals(Type.GROUP);
   }
 
@@ -140,8 +140,8 @@ public abstract class BaseConfigItem<T> {
    * @return this as a group item
    * @throws IllegalStateException if not a group item
    */
-  public ConfigGroup AsGroup() {
-    if(!IsGroup()) throw new IllegalStateException("Item is not a Group");
+  public ConfigGroup asGroup() {
+    if(!isGroup()) throw new IllegalStateException("Item is not a Group");
     return (ConfigGroup) this;
   }
 
@@ -149,7 +149,7 @@ public abstract class BaseConfigItem<T> {
    * Checks if this item is a list item
    * @return true if list item, false otherwise
    */
-  public boolean IsList() {
+  public boolean isList() {
     return type.equals(Type.ARRAY);
   }
   
@@ -158,8 +158,8 @@ public abstract class BaseConfigItem<T> {
    * @param subType type to check with
    * @return true if list item with given subtype, false otherwise
    */
-  public boolean IsList(Type subType) {
-    if(IsList()) {
+  public boolean isList(Type subType) {
+    if(isList()) {
       var itemType = ((ConfigList)this).getSubType(); 
       return subType == null || itemType == null ? subType == itemType : subType.equals(itemType);
     }
@@ -170,8 +170,8 @@ public abstract class BaseConfigItem<T> {
    * @return this as list item
    * @throws IllegalStateException if not a list item
    */
-  public ConfigList AsList() {
-    if(!IsList()) throw new IllegalStateException("Item is not a List");
+  public ConfigList asList() {
+    if(!isList()) throw new IllegalStateException("Item is not a List");
     return (ConfigList) this;
   }
 
@@ -179,7 +179,7 @@ public abstract class BaseConfigItem<T> {
    * Checks if this item is a boolean item
    * @return true if boolean item, false otherwise
    */
-  public boolean IsBoolean() {
+  public boolean isBoolean() {
     return type.equals(Type.BOOLEAN);
   }
 
@@ -188,8 +188,8 @@ public abstract class BaseConfigItem<T> {
    * @return this as boolean item
    * @throws IllegalStateException if not a boolean item
    */
-  public ConfigBoolean AsBoolean() {
-    if(!IsBoolean()) throw new IllegalStateException("Item is not a Boolean");
+  public ConfigBoolean asBoolean() {
+    if(!isBoolean()) throw new IllegalStateException("Item is not a Boolean");
     return (ConfigBoolean) this;
   }
 
@@ -197,7 +197,7 @@ public abstract class BaseConfigItem<T> {
    * Checks if this item is a number item
    * @return true if number item, false otherwise
    */
-  public boolean IsNumber() {
+  public boolean isNumber() {
     return type.equals(Type.NUMBER);
   }
 
@@ -206,8 +206,8 @@ public abstract class BaseConfigItem<T> {
    * @return this as number item
    * @throws IllegalStateException if not a number item
    */
-  public ConfigNumber AsNumber() {
-    if(!IsNumber()) throw new IllegalStateException("Item is not a Number");
+  public ConfigNumber asNumber() {
+    if(!isNumber()) throw new IllegalStateException("Item is not a Number");
     return (ConfigNumber) this;
   }
 
@@ -215,7 +215,7 @@ public abstract class BaseConfigItem<T> {
    * Checks if this item is a string item
    * @return true if string item, false otherwise
    */
-  public boolean IsString() {
+  public boolean isString() {
     return type.equals(Type.STRING);
   }
 
@@ -224,8 +224,8 @@ public abstract class BaseConfigItem<T> {
    * @return this as string item
    * @throws IllegalStateException if not a string item
    */
-  public ConfigString AsString() {
-    if(!IsString()) throw new IllegalStateException("Item is not a String");
+  public ConfigString asString() {
+    if(!isString()) throw new IllegalStateException("Item is not a String");
     return (ConfigString) this;
   }
 
