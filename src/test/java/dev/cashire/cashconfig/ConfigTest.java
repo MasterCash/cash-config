@@ -29,6 +29,8 @@ public class ConfigTest {
   @Test
   public void createConfig() {
     new Config(str("test"), file);
+    new Config(file);
+    new Config(of(str("test")), file);
   }
   
   @Test
@@ -85,5 +87,32 @@ public class ConfigTest {
     Assert.assertEquals(false, test.hasItem("test"));
     Assert.assertEquals(false, test.hasItem("root.test"));
     Assert.assertEquals(true, test.hasItem("root"));
+  }
+
+  @Test
+  public void setItemRoot() {
+    var test = new Config(file);
+    test.setItem(str("test"));
+    Assert.assertEquals(true, test.hasItem("test"));
+    test.setItem(new ConfigString("test", "bob"));
+    Assert.assertEquals("bob", test.getItem("test").getValue());
+  }
+
+  @Test
+  public void setItemPath() {
+    var test = new Config(new ConfigGroup("test"), file);
+    test.setItem("test", str("test"));
+    Assert.assertEquals(true, test.hasItem("test.test"));
+    test.setItem("test", new ConfigString("test", "bob"));
+    Assert.assertEquals("bob", test.getItem("test.test").getValue());
+  }
+
+  @Test
+  public void addItem() {
+    var test = new Config(file);
+    test.addItem(new ConfigGroup("test"));
+    Assert.assertEquals(true, test.hasItem("test"));
+    test.addItem("test", str("test"));
+    Assert.assertEquals(true, test.hasItem("test.test"));
   }
 }

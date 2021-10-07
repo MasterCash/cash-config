@@ -43,10 +43,7 @@ public class ConfigGroupTest {
   
   @Test
   public void createGroupConstructor() {
-    var test = new ConfigGroup(
-        "test",
-        of(new ConfigBoolean("1", false), new ConfigBoolean("2", false))
-    );
+    var test = new ConfigGroup("test", of(new ConfigBoolean("1", false), new ConfigBoolean("2", false)));
     Assert.assertEquals("Constructed with values", true, test.getValue().size() == 2);
   }
 
@@ -58,7 +55,7 @@ public class ConfigGroupTest {
   }
 
   @Test
-  public void toJSONEmpty() {
+  public void toJsonEmpty() {
     var test = new ConfigGroup("test");
     var json = new JsonObject();
     test.toJson(json);
@@ -66,7 +63,7 @@ public class ConfigGroupTest {
   }
   
   @Test
-  public void toJSONFilled() {
+  public void toJsonFilled() {
     var test = new ConfigGroup("test", of(new ConfigString("str","test"), new ConfigGroup("obj",of(new ConfigBoolean("test", true))), new ConfigList("list", of(new ConfigBoolean("", true), new ConfigBoolean("", true)), Type.BOOLEAN)));
     var json = new JsonObject();
     test.toJson(json);
@@ -78,7 +75,7 @@ public class ConfigGroupTest {
   }
 
   @Test
-  public void fromJSONEmpty() {
+  public void fromJsonEmpty() {
     var test = new ConfigGroup("test");
     var json = new JsonObject();
     test.fromJson(json);
@@ -86,10 +83,10 @@ public class ConfigGroupTest {
   }
 
   @Test
-  public void fromJSONFilled() {
-    var test = new ConfigGroup("test");
+  public void fromJsonFilled() {
     var json = new JsonObject();
     json.addProperty("str", "test");
+    var test = new ConfigGroup("test");
     var sub = new JsonObject();
     sub.addProperty("test", true);
     json.add("obj", sub);
