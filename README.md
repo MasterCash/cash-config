@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-  modImplementation "dev.cashire.cash-config:${project.config_version}"
+  modImplementation "dev.cashire:cash-config:${project.config_version}"
 }
 ```
 
