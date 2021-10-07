@@ -21,24 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.mastercash.cashconfig;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import io.github.mastercash.cashconfig.Items.ConfigBoolean;
-import io.github.mastercash.cashconfig.Items.ConfigGroup;
-import io.github.mastercash.cashconfig.Items.ConfigList;
-import io.github.mastercash.cashconfig.Items.ConfigString;
-import io.github.mastercash.cashconfig.Items.BaseConfigItem.Type;
+package dev.cashire.cashconfig;
 
 import static com.google.common.collect.ImmutableList.of;
 
-import java.security.InvalidParameterException;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import dev.cashire.cashconfig.items.BaseConfigItem.Type;
+import dev.cashire.cashconfig.items.ConfigBoolean;
+import dev.cashire.cashconfig.items.ConfigGroup;
+import dev.cashire.cashconfig.items.ConfigList;
+import dev.cashire.cashconfig.items.ConfigString;
+import java.security.InvalidParameterException;
+import org.junit.Assert;
+import org.junit.Test;
 
+/**
+ * Junit Test for {@link ConfigList}.
+ */
 public class ConfigListTest {
 
   @Test
@@ -68,7 +69,7 @@ public class ConfigListTest {
   }
 
   @Test
-  public void toJSONEmpty() {
+  public void toJsonEmpty() {
     var test = new ConfigList("test");
     var json = new JsonObject();
     test.toJson(json);
@@ -76,7 +77,7 @@ public class ConfigListTest {
   }
 
   @Test
-  public void toJSONFilled() {
+  public void toJsonFilled() {
     var test = new ConfigList("test", of(new ConfigBoolean(), new ConfigBoolean(), new ConfigBoolean()), Type.BOOLEAN);
     var json = new JsonObject();
     test.toJson(json);
@@ -84,7 +85,7 @@ public class ConfigListTest {
   }
   
   @Test
-  public void toJSONFilledGroupWithArray() {
+  public void toJsonFilledGroupWithArray() {
     var arr = new ConfigList("nestedArray", of(new ConfigBoolean(), new ConfigBoolean(), new ConfigBoolean()), Type.BOOLEAN);
     var obj = new ConfigGroup("", of(arr));
     var test = new ConfigList("test", of(obj), Type.GROUP);
@@ -94,7 +95,7 @@ public class ConfigListTest {
   }
 
   @Test
-  public void fromJSONEmpty() {
+  public void fromJsonEmpty() {
     var test = new ConfigList("", of(new ConfigBoolean(), new ConfigBoolean()), Type.BOOLEAN);
     var json = new JsonArray();
     test.fromJson(json);
@@ -102,18 +103,18 @@ public class ConfigListTest {
   }
 
   @Test
-  public void fromJSONFilled() {
-    var test = new ConfigList();
+  public void fromJsonFilled() {
     var json = new JsonArray();
     json.add(1);
     json.add(1);
     json.add(1);
+    var test = new ConfigList();
     test.fromJson(json);
     Assert.assertEquals("List from JSON full", 3, test.getValue().size());
   }
 
   @Test
-  public void fromJSONFilledArrayInArray() {
+  public void fromJsonFilledArrayInArray() {
     var list = new JsonArray();
     list.add(1);
     list.add(1);
@@ -126,23 +127,23 @@ public class ConfigListTest {
     test.fromJson(json);
     Assert.assertEquals("List from JSON has Lists", 3, test.size());
     Assert.assertEquals("List from JSON is Lists", Type.ARRAY, test.getValue().get(0).getType());
-    Assert.assertEquals("List from JSON has List with values", 3, ((ConfigList) test.getValue().get(0)).size());
+    Assert.assertEquals("List from JSON has List with values", 3, test.getValue().get(0).asList().size());
 
   }
 
   @Test
-  public void fromJSONFilledGroupWithArray() {
-    var obj = new JsonObject();
+  public void fromJsonFilledGroupWithArray() {
     var list = new JsonArray();
     list.add(false);
     list.add(false);
     list.add(false);
+    var obj = new JsonObject();
     obj.add("list", list);
     var json = new JsonArray();
     json.add(obj);
     var test = new ConfigList();
     test.fromJson(json);
-    Assert.assertEquals("List from JSON Group with List", 3, ((ConfigList)((ConfigGroup) test.getValue().get(0)).getItem("list")).size());
+    Assert.assertEquals("List from JSON Group with List", 3, test.getValue().get(0).asGroup().getItem("list").asList().size());
   }
 
   @Test
@@ -160,8 +161,8 @@ public class ConfigListTest {
     var item2 = new ConfigString();
     var test = new ConfigList("", of(item1), Type.STRING);
     test.addItem(item2);
-    Assert.assertEquals(item1, test.GetItem(0));
-    Assert.assertEquals(item2, test.GetItem(1));
+    Assert.assertEquals(item1, test.getItem(0));
+    Assert.assertEquals(item2, test.getItem(1));
   }
 
   @Test

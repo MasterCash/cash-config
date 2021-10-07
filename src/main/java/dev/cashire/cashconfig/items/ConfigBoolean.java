@@ -21,62 +21,65 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.mastercash.cashconfig.Items;
 
-import java.util.Objects;
+package dev.cashire.cashconfig.items;
+
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
+import com.google.gson.JsonPrimitive;
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Configuration item for String values for {@link BaseConfigItem}.
+ * Configuration item for Boolean values for {@link BaseConfigItem}.
  */
-public final class ConfigString extends BaseConfigItem<String> {
+public final class ConfigBoolean extends BaseConfigItem<Boolean> {
   /**
-   * Creates an empty String item with no key
-   * If adding to a {@link ConfigGroup}, use {@link #ConfigString(String, String)} instead.
+   * Creates an empty Boolean item with no key If adding to a {@link ConfigGroup},
+   * use {@link #ConfigBoolean(String, Boolean)} instead.
    */
-  public ConfigString() {
-    this("","");
+  public ConfigBoolean() {
+    this("", false);
   }
 
   /**
-   * Creates a new String item with given key
+   * Creates a new Boolean item with given key.
+   *
    * @param key The key to be used if put in a group.
    */
-  public ConfigString(@NotNull String key) {
-    this(key, "");
+  public ConfigBoolean(@NotNull String key) {
+    this(key, false);
   }
 
   /**
-   * Creates a new String item with given key and value
-   * @param key The key to be used if put in a group.
-   * @param str The default value contained in this item.
+   * Creates a new Boolean item with given key and value.
+   *
+   * @param key   The key to be used if put in a group.
+   * @param value the default value contained in this item.
    */
-  public ConfigString(@NotNull String key, String str) {
-    super(Objects.requireNonNull(key), Type.STRING);
-    this.value = str != null ? str : "";
+  public ConfigBoolean(@NotNull String key, Boolean value) {
+    super(Objects.requireNonNull(key), Type.BOOLEAN);
+    this.value = value != null ? value : false;
   }
 
   @Override
   public void toJson(@NotNull JsonObject parent) {
     Objects.requireNonNull(parent);
-    parent.addProperty(key, value);
+    parent.add(key, new JsonPrimitive(value));
   }
 
   @Override
   public void toJson(@NotNull JsonArray parent) {
     Objects.requireNonNull(parent);
-    parent.add(value);
+    parent.add(new JsonPrimitive(value));
   }
 
   @Override
   public void fromJson(@NotNull JsonElement element) {
     Objects.requireNonNull(element);
-    value = element.getAsString();
-    
+    value = element.getAsBoolean();
   }
+
 }
