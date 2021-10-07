@@ -25,17 +25,15 @@
 package dev.cashire.cashconfig.items;
 
 import static com.google.common.collect.ImmutableList.of;
+import static dev.cashire.cashconfig.Constants.LOGGER;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.cashire.cashconfig.Constants;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -88,23 +86,22 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * @param key The key to be used if put in a group.
    * @param items List of items to add to this array by default.
    * @param subType The type of this array
-   * @throws InvalidParameterException if an item in the array doesn't match subType
+   * @throws IllegalArgumentException if an item in the array doesn't match subType
    */
   public ConfigList(@NotNull String key, List<BaseConfigItem<?>> items, Type subType) {
     super(Objects.requireNonNull(key), Type.ARRAY);
     if (items != null) {
       value = new ArrayList<>(items);
-    }
-    else {
+    } else {
       value = new ArrayList<>();
     }
     this.subType = subType;
     for (var item : value) {
       if (this.subType == null) {
         this.subType = item.type;
-      }
-      else if (!this.subType.equals(item.getType())) {
-        throw new InvalidParameterException("Invalid type: " + item.getType() + " is not " + subType);
+      } else if (!this.subType.equals(item.getType())) {
+        throw new IllegalArgumentException(
+          "Invalid type: " + item.getType() + " is not " + subType);
       }
     }
   }
@@ -126,7 +123,9 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
     }
     for (var item : value) {
       if (!item.type.equals(type)) {
-        throw new IllegalArgumentException("type " + item.type.toString() + " from item in value doesn't match list type " + type.toString());
+        throw new IllegalArgumentException(
+          "type " + item.type.toString() 
+          + " from item in value doesn't match list type " + type.toString());
       }
     }
     this.value = value;
@@ -148,14 +147,14 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
    * if subType is null, then this item will set the type for this array based on it's type.
    *
    * @param item item to add.
-   * @throws InvalidParameterException type of item did not match {@link #getSubType()}
+   * @throws IllegalArgumentException type of item did not match {@link #getSubType()}
    */
   public void addItem(@NotNull BaseConfigItem<?> item) {
     Objects.requireNonNull(item);
     if (subType == null) {
       subType = item.getType();
     } else if (!subType.equals(item.getType())) {
-      throw new InvalidParameterException("Invalid type: " + item.getType() + " is not " + subType);
+      throw new IllegalArgumentException("Invalid type: " + item.getType() + " is not " + subType);
     }
     value.add(item);
   }
@@ -212,10 +211,9 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
       if (notInitialized) {
         var itemType = getType(value);
         if (subType != null && !subType.equals(itemType)) {
-          Constants.LOGGER.log(Level.ERROR, "Array element types don't match: " + subType + " doesn't match " + itemType);
+          LOGGER.error("Invalid Array type: " + subType + " doesn't match " + itemType);
           continue;
-        }
-        else if (subType == null) {
+        } else if (subType == null) {
           subType = itemType;
         }
         var item = getInstance(itemType);
@@ -239,7 +237,8 @@ public final class ConfigList extends BaseConfigItem<List<BaseConfigItem<?>>> {
   }
 
   /**
-   * The return value is an unmodifiable view of the list {@link Collections#unmodifiableList(List)}.
+   * The return value is an unmodifiable view of the 
+   * list {@link Collections#unmodifiableList(List)}.
    */
   @Override
   public List<BaseConfigItem<?>> getValue() {

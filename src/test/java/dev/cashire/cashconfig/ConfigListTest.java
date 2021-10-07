@@ -33,7 +33,6 @@ import dev.cashire.cashconfig.items.ConfigBoolean;
 import dev.cashire.cashconfig.items.ConfigGroup;
 import dev.cashire.cashconfig.items.ConfigList;
 import dev.cashire.cashconfig.items.ConfigString;
-import java.security.InvalidParameterException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,7 +43,9 @@ public class ConfigListTest {
 
   @Test
   public void createListConstructor() {
-    var test = new ConfigList("test", of(new ConfigBoolean(), new ConfigBoolean(), new ConfigBoolean()), null);
+    var test = new ConfigList(
+        "test", 
+        of(new ConfigBoolean(), new ConfigBoolean(), new ConfigBoolean()), null);
     Assert.assertEquals("list constructor", 3, test.getValue().size());
   }
 
@@ -57,9 +58,12 @@ public class ConfigListTest {
 
   @Test
   public void invalidTypes() {
-    Assert.assertThrows("adding invalid type constructor", InvalidParameterException.class,() -> new ConfigList("test", of(new ConfigBoolean(), new ConfigString()),Type.BOOLEAN)); 
-    var test = new ConfigList("test",null,Type.BOOLEAN);
-    Assert.assertThrows("adding invalid type to list", InvalidParameterException.class,() -> test.addItem(new ConfigString()));
+    Assert.assertThrows("adding invalid type constructor",
+        IllegalArgumentException.class, () -> new ConfigList("test",
+        of(new ConfigBoolean(), new ConfigString()), Type.BOOLEAN)); 
+    var test = new ConfigList("test", null, Type.BOOLEAN);
+    Assert.assertThrows("adding invalid type to list", 
+        IllegalArgumentException.class, () -> test.addItem(new ConfigString()));
   }
 
   @Test
@@ -78,7 +82,8 @@ public class ConfigListTest {
 
   @Test
   public void toJsonFilled() {
-    var test = new ConfigList("test", of(new ConfigBoolean(), new ConfigBoolean(), new ConfigBoolean()), Type.BOOLEAN);
+    var test = new ConfigList("test", 
+        of(new ConfigBoolean(), new ConfigBoolean(), new ConfigBoolean()), Type.BOOLEAN);
     var json = new JsonObject();
     test.toJson(json);
     Assert.assertEquals("List to JSON has elements", 3, json.get("test").getAsJsonArray().size());
@@ -86,12 +91,15 @@ public class ConfigListTest {
   
   @Test
   public void toJsonFilledGroupWithArray() {
-    var arr = new ConfigList("nestedArray", of(new ConfigBoolean(), new ConfigBoolean(), new ConfigBoolean()), Type.BOOLEAN);
+    var arr = new ConfigList("nestedArray", 
+        of(new ConfigBoolean(), new ConfigBoolean(), new ConfigBoolean()), Type.BOOLEAN);
     var obj = new ConfigGroup("", of(arr));
     var test = new ConfigList("test", of(obj), Type.GROUP);
     var json = new JsonObject();
     test.toJson(json);
-    Assert.assertEquals("List to JSON Group with List", 3, json.get("test").getAsJsonArray().get(0).getAsJsonObject().get("nestedArray").getAsJsonArray().size());
+    Assert.assertEquals("List to JSON Group with List", 3, 
+        json.get("test").getAsJsonArray().get(0).getAsJsonObject()
+        .get("nestedArray").getAsJsonArray().size());
   }
 
   @Test
@@ -127,7 +135,8 @@ public class ConfigListTest {
     test.fromJson(json);
     Assert.assertEquals("List from JSON has Lists", 3, test.size());
     Assert.assertEquals("List from JSON is Lists", Type.ARRAY, test.getValue().get(0).getType());
-    Assert.assertEquals("List from JSON has List with values", 3, test.getValue().get(0).asList().size());
+    Assert.assertEquals("List from JSON has List with values", 3, 
+        test.getValue().get(0).asList().size());
 
   }
 
@@ -143,7 +152,8 @@ public class ConfigListTest {
     json.add(obj);
     var test = new ConfigList();
     test.fromJson(json);
-    Assert.assertEquals("List from JSON Group with List", 3, test.getValue().get(0).asGroup().getItem("list").asList().size());
+    Assert.assertEquals("List from JSON Group with List", 3, 
+        test.getValue().get(0).asGroup().getItem("list").asList().size());
   }
 
   @Test

@@ -25,6 +25,7 @@
 package dev.cashire.cashconfig;
 
 import static com.google.common.collect.ImmutableList.of;
+import static dev.cashire.cashconfig.Constants.LOGGER;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,7 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import org.apache.logging.log4j.Level;
+import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -53,6 +54,49 @@ public final class Config {
   private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
   private final ConfigGroup items;
   private final File file;
+
+  /**
+   * Create new Configuration Instance.
+   * Loads/Saves file with given name from {@link FabricLoader#getConfigDir()}
+   *
+   * @param fileName filename of config file.
+   */
+  public Config(@NotNull String fileName) {
+    this(of(), fileName);
+  }
+
+  /**
+   * Create new Configuration Instance.
+   * Loads/Saves file with given name from {@link FabricLoader#getConfigDir()}
+   *
+   * @param item item to default in if no values.
+   * @param fileName filename of config file.
+   */
+  public Config(@NotNull BaseConfigItem<?> item, @NotNull String fileName) {
+    this(of(item), fileName);
+  }
+
+  /**
+   * Create new Configuration Instance.
+   * Loads/Saves file with given name from {@link FabricLoader#getConfigDir()}
+   *
+   * @param items items to default in if no values.
+   * @param fileName filename of config file.
+   */
+  public Config(@NotNull List<BaseConfigItem<?>> items, @NotNull String fileName) {
+    this(items, new File(
+        FabricLoader.getInstance().getConfigDir().toFile(), 
+        Objects.requireNonNull(fileName)));
+  }
+
+  /**
+   * Create new Configuration Instance.
+   *
+   * @param file file to read/save to.
+   */
+  public Config(@NotNull File file) {
+    this(of(), file);
+  }
 
   /**
    * Create new Configuration Instance.
@@ -137,25 +181,38 @@ public final class Config {
    *
    * @param path path to item in format: group.item
    * @param type Type of the value expected to find at the end of the path.
-   * @return The Configuration item found at the end of the path. If item is not found, null is returned.
-   * @throws IllegalArgumentException thrown if {@link BaseConfigItem.Type} doesn't match object's type
+   * @return item found, null otherwise
+   * @throws IllegalArgumentException thrown if type doesn't match item.
    */
-  public BaseConfigItem<?> getItem(@NotNull String path, @NotNull Type type) throws IllegalArgumentException {
+  public BaseConfigItem<?> getItem(@NotNull String path, @NotNull Type type)
+      throws IllegalArgumentException {
     Objects.requireNonNull(path);
     Objects.requireNonNull(type);
+    var selectedItem = getItem(path);
+    if (selectedItem != null && !selectedItem.getType().equals(type)) {
+      throw new IllegalArgumentException(
+        "Incorrect type " + type + " for " + path + ". Correct type: " + selectedItem.getType());
+    }
+    return selectedItem;
+  }
+
+  /**
+   * Retrieves an Item from the configuration structure.
+   *
+   * @param path path to item in format: group.item
+   * @return item if found, null otherwise
+   */
+  public BaseConfigItem<?> getItem(@NotNull String path) {
+    Objects.requireNonNull(path);
     var paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
     try {
       var parent = getParent(items, paths);
       var selectedItem = parent.getItem(paths.getLast());
-      if (!selectedItem.getType().equals(type)) {
-        throw new IllegalArgumentException("Incorrect type " + type + " for " + path + ". Correct type: " + selectedItem.getType());
-      }
       return selectedItem;
     } catch (NoSuchElementException e) {
-      Constants.LOGGER.log(Level.ERROR, "Item " + paths.getFirst() + " in path " + path + " was not found");
+      LOGGER.error("Item " + paths.getFirst() + " in path " + path + " was not found");
       return null;
     }
-
   }
 
   /**
@@ -170,7 +227,7 @@ public final class Config {
       var parent = getParent(items, paths);
       parent.removeItem(paths.getLast());
     } catch (NoSuchElementException e) {
-      Constants.LOGGER.log(Level.ERROR, "Item " + paths.getFirst() + " in path " + path + " was not found");
+      LOGGER.error("Item " + paths.getFirst() + " in path " + path + " was not found");
     }
   }
 
@@ -189,6 +246,78 @@ public final class Config {
     } catch (NoSuchElementException e) {
       return false;
     }
+  }
+
+  /**
+   * Sets the given item in the existing item at the end of the path.
+   * If existing item is an array, item is added.
+   *
+   * @param path path where to add item in format: group.item
+   * @param item item to add, must have key if adding to group
+   */
+  public void setItem(@NotNull String path, @NotNull BaseConfigItem<?> item) {
+    Objects.requireNonNull(path);
+    Objects.requireNonNull(item);
+    var parent = getItem(path);
+    if (parent == null) {
+      LOGGER.error("Path not found: " + path);
+    } else if (parent.isGroup()) {
+      parent.asGroup().setItem(item);
+      return;
+    } else if (parent.isList()) {
+      parent.asList().addItem(item);
+      return;
+    } else {
+      LOGGER.error("Item from " + path + " was not a group or list ");
+    }
+    return;
+  }
+
+  /**
+   * Sets the given item at the root of the config.
+   *
+   * @param item item to set, must have a key
+   */
+  public void setItem(@NotNull BaseConfigItem<?> item) {
+    Objects.requireNonNull(item);
+    items.setItem(item);
+    return;
+  }
+
+  /**
+   * Adds item to root of the config.
+   *
+   * @param item item to add, must have key
+   * @return true if added, false otherwise
+   */
+  public boolean addItem(@NotNull BaseConfigItem<?> item) {
+    Objects.requireNonNull(item);
+    return items.addItem(item);
+  }
+
+  /**
+   * Adds item to existing item found at end of path.
+   *
+   * @param path path to item to add to. format: group.item
+   * @param item Item to add, must have key if path item is a group
+   * @return true if added, false otherwise
+   */
+  public boolean addItem(@NotNull String path, @NotNull BaseConfigItem<?> item) {
+    Objects.requireNonNull(path);
+    Objects.requireNonNull(item);
+    var parent = getItem(path);
+    if (parent == null) {
+      return false;
+    }
+
+    if (parent.isGroup()) {
+      return parent.asGroup().addItem(item);
+    }
+    if (parent.isList()) {
+      parent.asList().addItem(item);
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -216,7 +345,8 @@ public final class Config {
    * @return the parent ConfigGroup
    * @throws NoSuchElementException item not found
    */
-  private static ConfigGroup getParent(@NotNull ConfigGroup parent, LinkedList<String> paths) throws NoSuchElementException {
+  private static ConfigGroup getParent(@NotNull ConfigGroup parent, LinkedList<String> paths) 
+      throws NoSuchElementException {
     if (paths.size() == 1) {
       if (!parent.hasItem(paths.getFirst())) {
         throw new NoSuchElementException();

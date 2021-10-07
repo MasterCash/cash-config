@@ -250,8 +250,13 @@ Currently, data cannot be changed but a default can be built and saved if file d
 
 ```java
 // Creates a new config with the given defaults to be saved if file doesn't exist.
+var config = Config(<File>);
 var config = Config(<item>, <File>);
 var config = Config(<list of items>, <File>);
+// Create a new config in the servers ./config directory
+var config = Config(<fileName>);
+var config = Config(<item>, <fileName>);
+var config = Config(<list of items>, <fileName>);
 // Will save the file with the current data (useful for overriding current data with a new set).
 config.saveFile();
 // Will check to see if the file exists already.
@@ -262,6 +267,7 @@ config.hasFile();
 config.readFile();
 // Will get the item at a given path. A path is in the form (<key>.<key>.<key>). 
 // Type is the type expected to be at the end of the path. throws IllegalArgumentException if wrong type.
+config.getItem(<path>);
 config.getItem(<path>, <type>);
 // Checks to see if given path resolves to an item.
 config.hasItem(<path>);
@@ -269,4 +275,12 @@ config.hasItem(<path>);
 config.getType(<path>);
 // Removes the item at a given path. 
 config.removeItem(<path>);
+// Sets the given item at the root of the config.
+config.setItem(<item>);
+// Sets the given item at the given path. 
+config.setItem(<path>, <item>);
+// Adds the given item at the root of the config.
+config.addItem(<item>);
+// Adds the given item at the given path.
+config.addItem(<path>, <item>);
 ```

@@ -88,6 +88,38 @@ public abstract class BaseConfigItem<T> {
   }
 
   /**
+   * Gets the type associated with a given {@link JsonElement}.
+   *
+   * @param value element to check type for
+   * @return the type associated with this element. If not known/supported, null
+   *         is returned.
+   */
+  @Internal
+  public static Type getType(@NotNull JsonElement value) {
+    Objects.requireNonNull(value);
+    if (value.isJsonArray()) {
+      return Type.ARRAY;
+    }
+    if (value.isJsonObject()) {
+      return Type.GROUP;
+    }
+    if (value.isJsonPrimitive()) {
+      var prim = value.getAsJsonPrimitive();
+      if (prim.isString()) {
+        return Type.STRING;
+      }
+      if (prim.isBoolean()) {
+        return Type.BOOLEAN;
+      }
+      if (prim.isNumber()) {
+        return Type.NUMBER;
+      }
+    }
+    return null;
+  }
+
+
+  /**
    * The key this value is stored under in an object.
    * If from an array this value may be empty.
    *
@@ -280,37 +312,6 @@ public abstract class BaseConfigItem<T> {
       throw new IllegalStateException("Item is not a String");
     }
     return (ConfigString) this;
-  }
-
-  /**
-   * Gets the type associated with a given {@link JsonElement}.
-   *
-   * @param value element to check type for
-   * @return the type associated with this element. If not known/supported, null
-   *         is returned.
-   */
-  @Internal
-  public static Type getType(@NotNull JsonElement value) {
-    Objects.requireNonNull(value);
-    if (value.isJsonArray()) {
-      return Type.ARRAY;
-    }
-    if (value.isJsonObject()) {
-      return Type.GROUP;
-    }
-    if (value.isJsonPrimitive()) {
-      var prim = value.getAsJsonPrimitive();
-      if (prim.isString()) {
-        return Type.STRING;
-      }
-      if (prim.isBoolean()) {
-        return Type.BOOLEAN;
-      }
-      if (prim.isNumber()) {
-        return Type.NUMBER;
-      }
-    }
-    return null;
   }
 
   /**
