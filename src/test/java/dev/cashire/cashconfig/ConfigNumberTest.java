@@ -21,58 +21,64 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.mastercash.cashconfig;
+
+package dev.cashire.cashconfig;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-
+import dev.cashire.cashconfig.items.ConfigNumber;
 import org.junit.Assert;
 import org.junit.Test;
 
-import io.github.mastercash.cashconfig.Items.ConfigBoolean;
 
-public class ConfigBooleanTest {
+/**
+ * Junit Test for {@link ConfigNumber}.
+ */
+public class ConfigNumberTest {
+  
   @Test
-  public void fromJSON() {
-    var test = new ConfigBoolean();
-    test.fromJson(new JsonPrimitive(true));
-    Assert.assertEquals("Correct value from json", (Boolean) true, test.getValue());
+  public void toJsonToInt() {
+    var test = new ConfigNumber("test", 10);
+    var json = new JsonObject();
+    test.toJson(json);
+    Assert.assertEquals("Int Number to JSON", 10, json.get("test").getAsNumber().intValue());
   }
 
   @Test
-  public void toJSON() {
-    var test = new ConfigBoolean("test", true);
-    var obj = new JsonObject();
-    test.toJson(obj);
-    var bool = obj.get("test").getAsJsonPrimitive().getAsBoolean();
-    Assert.assertEquals("Has Bool in JSON", true, bool);
+  public void toJsonToFloat() {
+    var test = new ConfigNumber("test", 10.2f);
+    var json = new JsonObject();
+    test.toJson(json);
+    Assert.assertEquals("Int Number to JSON", 10.2f, json.get("test").getAsNumber().floatValue(), 0.0002);
   }
 
   @Test
-  public void changeValue() {
-    var test = new ConfigBoolean();
-    test.setValue(true);
-    Assert.assertEquals(true, test.getValue());
+  public void setValue() {
+    var test = new ConfigNumber("", 10);
+    test.setValue(11);
+    Assert.assertEquals(11, test.getValue());
+    test = new ConfigNumber();
+    test.setValue(5);
+    Assert.assertEquals(5, test.getValue());
   }
 
   @Test
   public void isItem() {
-    var test = new ConfigBoolean();
-    Assert.assertEquals(true, test.isBoolean());
+    var test = new ConfigNumber();
+    Assert.assertEquals(false, test.isBoolean());
     Assert.assertEquals(false, test.isGroup());
     Assert.assertEquals(false, test.isList());
-    Assert.assertEquals(false, test.isNumber());
+    Assert.assertEquals(true, test.isNumber());
     Assert.assertEquals(false, test.isString());
   }
 
   @Test
   public void asItem() {
-    var test = new ConfigBoolean();
-    Assert.assertEquals(test, test.asBoolean());
+    var test = new ConfigNumber();
+    Assert.assertEquals(test, test.asNumber());
+    Assert.assertThrows(IllegalStateException.class, () -> test.asBoolean());
     Assert.assertThrows(IllegalStateException.class, () -> test.asGroup());
     Assert.assertThrows(IllegalStateException.class, () -> test.asList());
-    Assert.assertThrows(IllegalStateException.class, () -> test.asNumber());
     Assert.assertThrows(IllegalStateException.class, () -> test.asString());
   }
-  
+
 }

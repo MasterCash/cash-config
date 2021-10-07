@@ -1,38 +1,44 @@
-package io.github.mastercash.cashconfig;
+package dev.cashire.cashconfig;
 
+import static com.google.common.collect.ImmutableList.of;
+
+import dev.cashire.cashconfig.items.BaseConfigItem.Type;
+import dev.cashire.cashconfig.items.ConfigGroup;
+import dev.cashire.cashconfig.items.ConfigString;
 import java.io.File;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-import io.github.mastercash.cashconfig.Items.ConfigGroup;
-import io.github.mastercash.cashconfig.Items.ConfigString;
-import io.github.mastercash.cashconfig.Items.BaseConfigItem.Type;
-import static com.google.common.collect.ImmutableList.of;
 
+/**
+ * Junit Test for {@link Config}.
+ */
 public class ConfigTest {
   private static File file = new File("test.json");
-  private static ConfigString str(String key) {return new ConfigString(key, "test"); }
+
+  private static ConfigString str(String key) {
+    return new ConfigString(key, "test");
+  }
 
   @AfterClass
-  public static void Cleanup() {
+  public static void cleanup() {
     file.deleteOnExit();
   }
 
   @Test
-  public void CreateConfig() {
+  public void createConfig() {
     new Config(str("test"), file);
   }
   
   @Test
-  public void GetItem() {
+  public void getItem() {
     var test = new Config(str("test"), file);
     Assert.assertEquals("test", test.getItem("test", Type.STRING).getValue());
   }
 
   @Test
-  public void GetGroup() {
+  public void getGroup() {
     var grp = new ConfigGroup("test", of(str("test"), str("other")));
     var test = new Config(grp, file);
     Assert.assertNotNull(test.getItem("test", Type.GROUP));
@@ -41,13 +47,13 @@ public class ConfigTest {
   }
 
   @Test
-  public void SaveItems() {
+  public void saveItems() {
     var test = new Config(str("test"), file);
     test.saveFile();
   }
 
   @Test
-  public void LoadItems() {
+  public void loadItems() {
 
     var old = new Config(of(str("test"), str("other")), file);
     

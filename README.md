@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-  modImplementation "io.github.mastercash.cash-config:${project.config_version}"
+  modImplementation "dev.cashire.cash-config:${project.config_version}"
 }
 ```
 
@@ -108,7 +108,7 @@ item.asString()
 <br>
 
 All ConfigItems live under: 
-`io.github.mastercash.cashconfig.items.*`
+`dev.cashire.cashconfig.items.*`
 
 <br/>
 
@@ -244,7 +244,7 @@ item.getSubType();
 <br>
 
 ### Config
-The main entry point is the `Config` class. This lives in the `io.github.mastercash.cashconfig`.
+The main entry point is the `Config` class. This lives in the `dev.cashire.cashconfig`.
 This class acts as the root of the config file. It handles loading and saving the configuration data.
 Currently, data cannot be changed but a default can be built and saved if file doesn't exist.
 

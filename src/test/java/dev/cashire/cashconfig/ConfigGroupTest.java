@@ -21,27 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.mastercash.cashconfig;
 
-import org.junit.Test;
-import org.junit.Assert;
+package dev.cashire.cashconfig;
 
-import io.github.mastercash.cashconfig.Items.ConfigBoolean;
-import io.github.mastercash.cashconfig.Items.ConfigGroup;
-import io.github.mastercash.cashconfig.Items.ConfigList;
-import io.github.mastercash.cashconfig.Items.ConfigNumber;
-import io.github.mastercash.cashconfig.Items.ConfigString;
-import io.github.mastercash.cashconfig.Items.BaseConfigItem.Type;
 import static com.google.common.collect.ImmutableList.of;
-import com.google.gson.JsonObject;
 
+import com.google.gson.JsonObject;
+import dev.cashire.cashconfig.items.BaseConfigItem.Type;
+import dev.cashire.cashconfig.items.ConfigBoolean;
+import dev.cashire.cashconfig.items.ConfigGroup;
+import dev.cashire.cashconfig.items.ConfigList;
+import dev.cashire.cashconfig.items.ConfigNumber;
+import dev.cashire.cashconfig.items.ConfigString;
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * Junit tests for {@link ConfigGroup}.
+ */
 public class ConfigGroupTest {
   
   @Test
   public void createGroupConstructor() {
-    var test = new ConfigGroup("test", of(new ConfigBoolean("1", false), new ConfigBoolean("2", false)));
+    var test = new ConfigGroup(
+        "test",
+        of(new ConfigBoolean("1", false), new ConfigBoolean("2", false))
+    );
     Assert.assertEquals("Constructed with values", true, test.getValue().size() == 2);
   }
+
   @Test
   public void createGroupAddValues() {
     var test = new ConfigGroup();

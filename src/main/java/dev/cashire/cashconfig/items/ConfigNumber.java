@@ -21,19 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.mastercash.cashconfig.Items;
 
-import java.util.Objects;
+package dev.cashire.cashconfig.items;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Configuration item for Numerical values for {@link BaseConfigItem}
+ * Configuration item for Numerical values for {@link BaseConfigItem}.
  */
 public final class ConfigNumber extends BaseConfigItem<Number> {
 
@@ -46,7 +45,8 @@ public final class ConfigNumber extends BaseConfigItem<Number> {
   }
 
   /**
-   * Creates a new Number item with given key
+   * Creates a new Number item with given key.
+   *
    * @param key The key to be used if put in a group.
    */
   public ConfigNumber(@NotNull String key) {
@@ -54,7 +54,8 @@ public final class ConfigNumber extends BaseConfigItem<Number> {
   }
 
   /**
-   * Creates a new Number item with given key and value
+   * Creates a new Number item with given key and value.
+   *
    * @param key The key to be used if put in a group.
    * @param value The default value contained in this item.
    */

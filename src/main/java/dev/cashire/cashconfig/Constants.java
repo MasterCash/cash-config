@@ -21,12 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.mastercash.cashconfig;
+
+package dev.cashire.cashconfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Constants used by this package.
+ */
 public class Constants {
-  public static final String MOD_ID = "cashconfig";
+  /**
+   * Mod id for this mod.
+   */
+  public static final String MOD_ID = "cash-config";
+  /**
+   * Logger for this mod.
+   */
   public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 }
